@@ -1,0 +1,18 @@
+name: 💡 新規実装
+description: 新しい機能の追加・実装を行う際に使用します
+title: "[FEATURE] "
+labels: ["新規実装"]
+body:
+  - type: textarea
+    id: feature_summary
+    attributes:
+      label: 何を作成したいですか？
+      description: 詳細・作成箇所と命名規則・備考を入力してください
+      placeholder: |
+        ## 詳細
+        
+        ## 作成箇所と命名規則
+        
+        ## 備考
+    validations:
+      required: true

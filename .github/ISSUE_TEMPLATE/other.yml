@@ -1,0 +1,15 @@
+name: 🐴 その他
+description: 他のカテゴリに該当しない際に使用します
+title: "[OTHER] "
+labels: ["その他"]
+body:
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 📋 内容を教えてください
+      description: 内容の概要を説明してください
+      placeholder: |
+        ## 詳細
+    validations:
+      required: true

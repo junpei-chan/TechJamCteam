@@ -1,0 +1,19 @@
+name: 🔧 変更・改善
+description: 変更や改善が必要な場合に使用します
+title: "[IMPROVEMENT] "
+labels: ["改善"]
+
+body:
+  - type: textarea
+    id: improvement_summary
+    attributes:
+      label: 📊 変更・改善の概要
+      description: 詳細・変更箇所と命名規則・備考を入力してください
+      placeholder: |
+        ## 詳細
+
+        ## 変更箇所と命名規則
+
+        ## 備考
+    validations:
+      required: true

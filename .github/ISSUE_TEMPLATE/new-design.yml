@@ -1,0 +1,14 @@
+name: 🎨 新規デザイン
+description: ロゴ、ページ、コンポーネントなど、新しいデザインの作成を行う際に使用します
+title: "[DESIGN] "
+labels: ["新規デザイン"]
+body:
+  - type: textarea
+    id: design_summary
+    attributes:
+      label: 🎯 どのようなデザインを作りますか？
+      description: 作成するデザインの概要を説明してください
+      placeholder: |
+        ## 詳細
+    validations:
+      required: true
