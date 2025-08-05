@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from .database import engine, Base
-from .routers import menu, users, shop
+from .routers import menu, users, shop, area
 from .models import users as user_models
+from .models import area as area_models
+from .models import menu as menu_models
 from .models import shop as shop_models
 import time
 import logging
@@ -38,6 +40,7 @@ async def startup_event():
 app.include_router(menu.router)
 app.include_router(users.router)
 app.include_router(shop.router)
+app.include_router(area.router)
 
 @app.get("/health")
 def health_check():
