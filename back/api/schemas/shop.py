@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from .menu import MenuBase
 
 class ShopBase(BaseModel):
   area_id: str
@@ -27,3 +28,10 @@ class ShopUpdate(BaseModel):
   homepage_url: Optional[str]
   address: Optional[str]
   phone: Optional[str]
+
+class ShopWithMenus(BaseModel):
+  shop_name: str
+  menus: List[MenuBase]
+
+  class Config:
+    orm_mode = True
