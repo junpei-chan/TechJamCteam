@@ -1,8 +1,11 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from ..database import Base
 
 class Area(Base):
-  __tablename__ = "area"
+  __tablename__ = "areas"
 
   id = Column(Integer, primary_key=True, index=True)
-  name = Column(String, unique=True, nullable=False)
+  name = Column(String)
+
+  shops = relationship("Shop", back_populates="area")

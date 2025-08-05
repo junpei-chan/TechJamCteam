@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy.orm import relationship
 from ..database import Base
 
 class Shop(Base):
-  __tablename__ = "shop"
+  __tablename__ = "shops"
 
   id = Column(Integer, primary_key=True, idnex=True)
   area_id = Column(String, ForeignKey("area.area.id"), nullable=False)
@@ -12,3 +13,6 @@ class Shop(Base):
   homepage_url = Column(String(255))
   address = Column(String(255))
   phone = Column(String(20))
+
+  area = relationship("Area", back_populates="shops")
+  menus = relationship("Menu", back_populates="shop")
