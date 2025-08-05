@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app import models, schemas
+from .. import models, schemas
 
 # ShopCreateのデータを受け取り、DBに新規登録
 def create_shop(db: Session, shop: schemas.ShopCreate):
