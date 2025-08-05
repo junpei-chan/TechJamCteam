@@ -5,8 +5,8 @@ from ..database import Base
 class Shop(Base):
   __tablename__ = "shops"
 
-  id = Column(Integer, primary_key=True, idnex=True)
-  area_id = Column(String, ForeignKey("area.area.id"), nullable=False)
+  id = Column(Integer, primary_key=True, index=True)
+  area_id = Column(Integer, ForeignKey("areas.id"), nullable=False)
   name = Column(String(100), nullable=False)
   shop_detail = Column(Text)
   image_path = Column(String(255))

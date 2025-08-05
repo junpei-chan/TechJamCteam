@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from database import get_db
-from cruds import area as area_crud
-from schemas.shop import ShopWithMenus
+from ..database import get_db
+from ..cruds import area as area_crud
+from ..schemas.shop import ShopWithMenus
 from typing import List
 
 router = APIRouter()

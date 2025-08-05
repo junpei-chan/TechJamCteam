@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List
-from schemas.menu import MenuBase
+from .menu import MenuBase
 
 class ShopBase(BaseModel):
   area_id: int
