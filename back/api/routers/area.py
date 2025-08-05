@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from .. import models
-from ..schemas.area import AreaBase, AreaRead
-from ..database import get_db
+from database import get_db
+from cruds import area as area_crud
+from schemas.shop import ShopWithMenus
+from typing import List
 
-router = APIRouter(prefix="/areas", tags=["areas"])
+router = APIRouter()
 
-# @router.get("/{area_id}", response_model=AreaRead)
-# def get_area_by_id(area_id: int, db: Session = Depends(get_db)):
-#   return db.query(models.Area).filter(models.Area.area_id == area_id).first()
+@router.get("/areas/{area_id}/menus", response_model=List[ShopWithMenus])
+def read_menus_by_area(area_id: int, db: Session = Depends(get_db)):
+    return area_crud.get_menus_by_area(db, area_id)
