@@ -18,3 +18,12 @@ class ShopRead(ShopBase):
 
   class Config:
     orm_mode = True
+
+class ShopUpdate(BaseModel):
+  area_id: Optional[int]
+  shop_name: Optional[str]
+  shop_detail: Optional[str]
+  image_path: Optional[str]
+  homepage_url: Optional[str]
+  address: Optional[str]
+  phone: Optional[str]
