@@ -17,7 +17,7 @@ def read_shops(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
   return cruds.get_shops(db, skip, limit)
 
 # /shops/1 などで1件のショップを取得
-@router.post("/", response_model=ShopRead)
+@router.get("/{shop_id}", response_model=ShopRead)
 def read_shop(shop_id: int, db: Session = Depends(get_db)):
   shop = cruds.get_shop_by_id(db, shop_id)
   if not shop:
