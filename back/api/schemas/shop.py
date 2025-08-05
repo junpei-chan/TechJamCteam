@@ -2,10 +2,10 @@ from pydantic import BaseModel
 from typing import Optional
 
 class ShopBase(BaseModel):
-  area_id: int
+  area_id: str
   shop_name: str
-  shop_deteil: Optional[str] = None
-  image_patth: Optional[str] = None
+  shop_detail: Optional[str] = None
+  image_path: Optional[str] = None
   homepage_url: Optional[str] = None
   address: Optional[str] = None
   phone: Optional[str] = None
@@ -14,13 +14,13 @@ class ShopCreate(ShopBase):
   pass
 
 class ShopRead(ShopBase):
-  shop_id: int
+  id: int
 
   class Config:
-    orm_mode = True
+    from_attributes = True
 
 class ShopUpdate(BaseModel):
-  area_id: Optional[int]
+  area_id: Optional[str]
   shop_name: Optional[str]
   shop_detail: Optional[str]
   image_path: Optional[str]
