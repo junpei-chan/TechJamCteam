@@ -66,7 +66,7 @@ class MenuCRUD:
   
   def create_menu(self, menu: MenuCreate) -> Menu:
     """新しいメニューを作成"""
-    db_menu = Menu(**menu.dict())
+    db_menu = Menu(**menu.model_dump())
     self.db.add(db_menu)
     self.db.commit()
     self.db.refresh(db_menu)
@@ -76,18 +76,18 @@ class MenuCRUD:
     """メニューを更新"""
     db_menu = self.get_menu(menu_id)
     if db_menu:
-        update_data = menu.dict(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(db_menu, field, value)
-        self.db.commit()
-        self.db.refresh(db_menu)
+      update_data = menu.model_dump(exclude_unset=True)
+      for field, value in update_data.items():
+        setattr(db_menu, field, value)
+      self.db.commit()
+      self.db.refresh(db_menu)
     return db_menu
   
   def delete_menu(self, menu_id: int) -> bool:
     """メニューを削除"""
     db_menu = self.get_menu(menu_id)
     if db_menu:
-        self.db.delete(db_menu)
-        self.db.commit()
-        return True
+      self.db.delete(db_menu)
+      self.db.commit()
+      return True
     return False

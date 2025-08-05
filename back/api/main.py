@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from .database import engine, Base
-from .routers import menu
+from .routers import menu, users
+from .models import users as user_models
 import time
 import logging
 from sqlalchemy import text
@@ -34,6 +35,7 @@ async def startup_event():
   create_tables()
 
 app.include_router(menu.router)
+app.include_router(users.router)
 
 @app.get("/health")
 def health_check():
