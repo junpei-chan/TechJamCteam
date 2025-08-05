@@ -25,16 +25,16 @@ def read_shop(shop_id: int, db: Session = Depends(get_db)):
 
 # /shops/{shop_id} にアクセスで、該当IDのショップが更新される
 @router.put("/{shop_id}", response_model=schemas.ShopRead)
-def update_shop(shop_id: int, shop: schemas.ShopCreate, db: Session = Depends(get_db)):
-    updated_shop = crud.update_shop(db, shop_id, shop)
-    if updated_shop is None:
-        raise HTTPException(status_code=404, detail="Shop not found")
-    return updated_shop
+def update_shop(shop_id: int, shop: schemas.ShopUpdate, db: Session = Depends(get_db)):
+  updated_shop = crud.update_shop(db, shop_id, shop)
+  if updated_shop is None:
+    raise HTTPException(status_code=404, detail="Shop not found")
+  return updated_shop
 
 # /shops/{shop_id} でショップを削除
 @router.delete("/{shop_id}", response_model=schemas.ShopRead)
 def delete_shop(shop_id: int, db: Session = Depends(get_db)):
-    deleted_shop = crud.delete_shop(db, shop_id)
-    if deleted_shop is None:
-        raise HTTPException(status_code=404, detail="Shop not found")
-    return deleted_shop
+  deleted_shop = crud.delete_shop(db, shop_id)
+  if deleted_shop is None:
+    raise HTTPException(status_code=404, detail="Shop not found")
+  return deleted_shop
