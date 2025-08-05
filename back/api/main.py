@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from .database import engine, Base
-from .routers import menu, users, shop
+from .routers import menu, users, shop, menu_favorites
+# モデルを正しい順序でインポート（外部キーの依存関係を考慮）
 from .models import users as user_models
+from .models import menu as menu_models
 from .models import shop as shop_models
+from .models import menu_favorites as menu_favorites_models
 import time
 import logging
 from sqlalchemy import text
@@ -38,6 +41,7 @@ async def startup_event():
 app.include_router(menu.router)
 app.include_router(users.router)
 app.include_router(shop.router)
+app.include_router(menu_favorites.router)
 
 @app.get("/health")
 def health_check():
