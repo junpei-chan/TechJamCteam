@@ -10,6 +10,9 @@ class MenuBase(BaseModel):
   image_url: Optional[str] = None
   is_available: bool = True
 
+  class config:
+    orm_mode = True
+
 class MenuCreate(MenuBase):
   pass
 
