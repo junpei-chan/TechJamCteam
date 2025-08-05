@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .database import engine, Base
-from .routers import menu, users, shop, area
+from .routers import menu, users, shop, area, favorites
 from .models import users as user_models
 from .models import area as area_models
 from .models import menu as menu_models
@@ -41,6 +41,7 @@ app.include_router(menu.router)
 app.include_router(users.router)
 app.include_router(shop.router)
 app.include_router(area.router)
+app.include_router(favorites.router)
 
 @app.get("/health")
 def health_check():

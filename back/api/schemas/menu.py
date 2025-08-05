@@ -11,7 +11,7 @@ class MenuBase(BaseModel):
   is_available: bool = True
 
   class config:
-    orm_mode = True
+    from_attributes = True
 
 class MenuCreate(MenuBase):
   pass
