@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
+from sqlalchemy import or_
 from typing import List, Optional
 from ..models.menu import Menu
 from ..schemas.menu import MenuCreate, MenuUpdate
