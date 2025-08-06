@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authLogin } from "@/api/authLogin"
+import { authLogin } from "@/api/auth/authLogin"
 import Cookies from "js-cookie";
 
 export default function Login() {
