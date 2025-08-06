@@ -34,4 +34,4 @@ class ShopWithMenus(BaseModel):
   menus: List[MenuBase]
 
   class Config:
-    orm_mode = True
+    from_attributes = True
