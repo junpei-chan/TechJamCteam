@@ -43,6 +43,7 @@ app.include_router(menu.router)
 app.include_router(users.router)
 app.include_router(shop.router)
 app.include_router(area.router)
+app.include_router(genre.router)
 app.include_router(menu_favorites.router)
 app.include_router(favorites.router)
 
