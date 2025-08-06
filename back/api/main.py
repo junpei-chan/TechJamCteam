@@ -1,12 +1,14 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routers import menu, users, shop, area, menu_favorites, favorites
+from .routers import menu, users, shop, area, menu_favorites, favorites, auth
 from .models import users as user_models
 from .models import area as area_models
 from .models import menu as menu_models
 from .models import menu as menu_models
 from .models import shop as shop_models
 from .models import menu_favorites as menu_favorites_models
+from .models import shop_users as shop_user_models
 import time
 import logging
 from sqlalchemy import text
@@ -34,6 +36,15 @@ def create_tables():
 
 app = FastAPI(title="Menu API", version="1.0.0")
 
+# CORS設定
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3006", "http://localhost:3000"],  # フロントエンドのURL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.on_event("startup")
 async def startup_event():
   """アプリケーション開始時の処理"""
@@ -46,6 +57,7 @@ app.include_router(area.router)
 app.include_router(genre.router)
 app.include_router(menu_favorites.router)
 app.include_router(favorites.router)
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
 @app.get("/health")
 def health_check():
