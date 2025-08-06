@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from ..models.users import Users
-from ..schemas.users import UserCreate
+from ..schemas.users import UserCreate, UserUpdate
 
 class UsersCRUD:
   def __init__(self, db: Session):
@@ -25,7 +25,7 @@ class UsersCRUD:
     return db_user
   
   # ユーザー情報の更新
-  def update_user(self, user_id: int, user: UserCreate) -> Optional[Users]:
+  def update_user(self, user_id: int, user: UserUpdate) -> Optional[Users]:
     db_user = self.get_user(user_id)
 
     if db_user:
