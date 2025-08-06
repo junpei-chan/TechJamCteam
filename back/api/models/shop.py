@@ -16,3 +16,4 @@ class Shop(Base):
 
   area = relationship("Area", back_populates="shops")
   menus = relationship("Menu", back_populates="shop")
+  shop_users = relationship("ShopUsers", back_populates="shop")

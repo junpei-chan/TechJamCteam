@@ -6,3 +6,6 @@ python-multipart
 pymysql
 cryptography
 python-dotenv
+python-jose[cryptography]
+passlib[bcrypt]
+python-dateutil
