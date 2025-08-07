@@ -1,14 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routers import menu, users, shop, area, menu_favorites, favorites, auth
-from .models import users as user_models
-from .models import area as area_models
-from .models import menu as menu_models
-from .models import menu as menu_models
-from .models import shop as shop_models
-from .models import menu_favorites as menu_favorites_models
-from .models import shop_users as shop_user_models
+from .routers import menu, users, shop, area, menu_favorites, favorites, auth, notification
+from .models import (
+  users as user_models,
+  area as area_models,
+  menu as menu_models,
+  shop as shop_models,
+  menu_favorites as menu_favorites_models,
+  shop_users as shop_user_models,
+  notification as notification_models
+)
 import time
 import logging
 from sqlalchemy import text
