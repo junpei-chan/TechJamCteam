@@ -32,7 +32,7 @@ class NotificationCRUD:
   # 通知を既読に変更（一括）
   def mark_all_as_read(self, user_id: int):
     self.db.query(Notification).filter(
-        Notification.user_id == user_id,
-        Notification.status == "unread"
+      Notification.user_id == user_id,
+      Notification.status == "unread"
     ).update({"status": "read"})
     self.db.commit()
