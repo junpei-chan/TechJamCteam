@@ -17,3 +17,6 @@ class Notification(Base):
   user = relationship("Users")
   shop = relationship("Shop")
   shop_user = relationship("ShopUsers")
+
+  def __repr__(self):
+    return f"<Notification(to_user={self.user_id}, contents={self.content})>"
