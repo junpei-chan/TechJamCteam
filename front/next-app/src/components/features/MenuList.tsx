@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { MenuIndex, MenuIndexRequest, MenuIndexResponse } from '@/api/menu/menuIndex';
 import { menuDelete } from '@/api/menu/menuDelete';
+import { useRouter } from 'next/navigation';
 
 export default function MenuList() {
   const [menus, setMenus] = useState<MenuIndexRequest[]>([]);
@@ -12,6 +13,7 @@ export default function MenuList() {
   const [deletingMenuId, setDeletingMenuId] = useState<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [menuToDelete, setMenuToDelete] = useState<MenuIndexRequest | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -86,6 +88,10 @@ export default function MenuList() {
     setMenuToDelete(null);
   };
 
+  const handleMenuClick = (menuId: number) => {
+    router.push(`/menu/${menuId}`);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -116,10 +122,17 @@ export default function MenuList() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {menus.map((menu) => (
-          <div key={menu.id} className="bg-white rounded-lg shadow-md overflow-hidden relative">
+          <div 
+            key={menu.id} 
+            className="bg-white rounded-lg shadow-md overflow-hidden relative cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => handleMenuClick(menu.id)}
+          >
             {/* 削除ボタン */}
             <button
-              onClick={() => handleDeleteClick(menu)}
+              onClick={(e) => {
+                e.stopPropagation(); // カードクリックイベントを防ぐ
+                handleDeleteClick(menu);
+              }}
               disabled={deletingMenuId === menu.id}
               className="absolute top-2 right-2 z-10 bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold transition-colors"
               title="メニューを削除"
