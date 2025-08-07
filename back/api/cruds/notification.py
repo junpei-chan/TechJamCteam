@@ -22,6 +22,8 @@ class NotificationCRUD:
   # 通知を既読に変更
   def mark_as_read(self, notification_id: int) -> Optional[Notification]:
     notification = self.db.query(Notification).filter(Notification.notification_id == notification_id).first()
+    if not notification:
+      return None
     if notification:
       notification.status = "read"
       self.db.commit()
