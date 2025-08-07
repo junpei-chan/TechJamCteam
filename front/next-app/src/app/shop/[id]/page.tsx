@@ -1,7 +1,21 @@
-import Link from 'next/link';
-import MenuList from '@/components/features/MenuList';
+'use client';
 
-export default function Top() {
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import ShopDetailComponent from '@/components/features/ShopDetail';
+
+export default function ShopDetailPage() {
+  const params = useParams();
+  const shopId = params.id as string;
+
+  if (!shopId) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="text-red-500">店舗IDが指定されていません</div>
+      </div>
+    );
+  }
+
   return (
     <main>
       {/* ナビゲーション */}
@@ -19,7 +33,7 @@ export default function Top() {
         </div>
       </nav>
       
-      <MenuList />
+      <ShopDetailComponent shopId={shopId} />
     </main>
   );
 }

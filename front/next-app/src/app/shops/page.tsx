@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import MenuList from '@/components/features/MenuList';
+import ShopListComponent from '@/components/features/ShopList';
 
-export default function Top() {
+export default function ShopsPage() {
   return (
     <main>
       {/* ナビゲーション */}
@@ -19,7 +19,7 @@ export default function Top() {
         </div>
       </nav>
       
-      <MenuList />
+      <ShopListComponent />
     </main>
   );
 }
