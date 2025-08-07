@@ -19,7 +19,7 @@ class NotificationCRUD:
   def get_user_notifications(self, user_id: int) -> List[Notification]:
     return self.db.query(Notification).filter(Notification.user_id == user_id).all()
 
-  # 通知を既読に変更
+  # 通知を既読に変更（個別）
   def mark_as_read(self, notification_id: int) -> Optional[Notification]:
     notification = self.db.query(Notification).filter(Notification.notification_id == notification_id).first()
     if not notification:
@@ -28,3 +28,11 @@ class NotificationCRUD:
     self.db.commit()
     self.db.refresh(notification)
     return notification
+
+  # 通知を既読に変更（一括）
+  def mark_all_as_read(self, user_id: int):
+    self.db.query(Notification).filter(
+        Notification.user_id == user_id,
+        Notification.status == "unread"
+    ).update({"status": "read"})
+    self.db.commit()
