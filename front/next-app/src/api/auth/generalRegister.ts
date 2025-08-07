@@ -8,7 +8,7 @@ export type GeneralSignupRequest = {
   address: string;
 }
 
-export function GeneralSignup({ request }: { request: GeneralSignupRequest}) {
+export async function GeneralSignup({ request }: { request: GeneralSignupRequest}) {
   const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
 
   // confirm_passwordを除外してバックエンドに送信

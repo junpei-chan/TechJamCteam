@@ -1,17 +1,17 @@
 import axios from 'axios';
 
-export type AuthLoginRequest = {
-  email: string;
+export type ShopLoginRequest = {
+  username: string;  // 店舗ユーザーはユーザー名でログイン
   password: string;
 }
 
-export type BackendAuthResponse = {
+export type BackendShopAuthResponse = {
   access_token: string;
   token_type: string;
   user_type: string;
 };
 
-export type AuthLoginResponse =
+export type ShopLoginResponse =
   | {
     success: true;
     access_token: string;
@@ -24,33 +24,33 @@ export type AuthLoginResponse =
     messages: Array<string>;
   };
 
-export function authLogin({ request }: { request: AuthLoginRequest }) {
+export function shopLogin({ request }: { request: ShopLoginRequest }) {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8006';
-  const apiUrl = `${backendUrl}/auth/login`;
+  const apiUrl = `${backendUrl}/auth/shop/login`;
 
-  console.log("Login request data:", { 
-    email: request.email, 
+  console.log("Shop login request data:", { 
+    username: request.username, 
     password: request.password ? '***' + request.password.slice(-2) : 'empty',
     passwordLength: request.password ? request.password.length : 0
   });
 
   return axios
-    .post<BackendAuthResponse>(apiUrl, request)
+    .post<BackendShopAuthResponse>(apiUrl, request)
     .then(response => {
-      console.log("Login successful:", response.data);
+      console.log("Shop login successful:", response.data);
       return {
         success: true,
         access_token: response.data.access_token,
         token_type: response.data.token_type,
         user_type: response.data.user_type,
-      } as AuthLoginResponse;
+      } as ShopLoginResponse;
     })
     .catch(error => {
-      console.error("Login error:", error);
+      console.error("Shop login error:", error);
       console.error("Error response:", error.response?.data);
       return {
         success: false,
-        messages: error.response?.data?.detail ? [error.response.data.detail] : ['ログインに失敗しました'],
-      } as AuthLoginResponse;
+        messages: error.response?.data?.detail ? [error.response.data.detail] : ['店舗ログインに失敗しました'],
+      } as ShopLoginResponse;
     });
 }
