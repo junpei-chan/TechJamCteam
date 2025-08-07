@@ -5,7 +5,7 @@ import { MenuIndex, MenuIndexRequest, MenuIndexResponse } from '@/api/menu/menuI
 import { menuDelete } from '@/api/menu/menuDelete';
 import { useRouter } from 'next/navigation';
 
-export default function MenuList() {
+export function MenuList() {
   const [menus, setMenus] = useState<MenuIndexRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
