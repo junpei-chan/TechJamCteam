@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+:root {
+  --main-color: #F7B225;
+  --accent-color: #D74D13;
+  --base-color: #FBF8F3;
+}
+
 /* Custom utilities */
 .line-clamp-2 {
   display: -webkit-box;
@@ -7,4 +13,10 @@
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+@theme {
+  --color-main: var(--main-color);
+  --color-accent: var(--accent-color);
+  --color-base: var(--base-color);
 }

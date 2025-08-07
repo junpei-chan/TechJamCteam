@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import ShopDetailComponent from '@/components/features/ShopDetail';
+import ShopDetailComponent from '@/components/features/shop/ShopDetail';
 
 export default function ShopDetailPage() {
   const params = useParams();

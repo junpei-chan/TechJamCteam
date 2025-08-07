@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GeneralSignup, GeneralSignupRequest } from "../../api/auth/generalRegister";
+import { GeneralSignup, GeneralSignupRequest } from "../../../api/auth/generalRegister";
 
 export default function Register() {
   const router = useRouter();
