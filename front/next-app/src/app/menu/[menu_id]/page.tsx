@@ -12,6 +12,18 @@ export default function MenuDetailPage() {
   const [menu, setMenu] = useState<MenuDetailRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
+
+  const getImageSrc = (imageUrl: string) => {
+    if (imageError) {
+      return '/menu-default.png';
+    }
+    // blob URLやローカルURLの場合はデフォルト画像を使用
+    if (imageUrl && (imageUrl.startsWith('blob:') || imageUrl.startsWith('file:'))) {
+      return '/menu-default.png';
+    }
+    return imageUrl || '/menu-default.png';
+  };
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -45,10 +57,11 @@ export default function MenuDetailPage() {
           <h2>{menu.name}</h2>
           <p>{menu.description}</p>
           <Image 
-            src={menu.image_url || "/menu-default.png"}
+            src={getImageSrc(menu.image_url)}
             alt={menu.name}
             width={200}
             height={200}
+            onError={() => setImageError(true)}
           />
           <p>¥{menu.price}</p>
           {menu.category && <p>カテゴリ: {menu.category}</p>}

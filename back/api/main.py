@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
-from .routers import menu, users, shop, area, menu_favorites, favorites, auth  # , genre  # 一時的にコメントアウト
+from .routers import menu, users, shop, area, menu_favorites, favorites, auth, upload  # , genre  # 一時的にコメントアウト
 from .models import users as user_models
 from .models import area as area_models
 from .models import menu as menu_models
@@ -35,6 +36,12 @@ def create_tables():
         raise
 
 app = FastAPI(title="Menu API", version="1.0.0")
+
+# 静的ファイルの配信設定
+from pathlib import Path
+static_path = Path(__file__).parent.parent / "static"
+static_path.mkdir(exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 
 # CORS設定を強化
 app.add_middleware(
@@ -70,6 +77,7 @@ app.include_router(area.router)
 app.include_router(menu_favorites.router)
 app.include_router(favorites.router)
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(upload.router)
 
 @app.get("/health")
 def health_check():
