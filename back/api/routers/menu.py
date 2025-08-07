@@ -4,6 +4,8 @@ from typing import Optional
 from ..schemas.menu import MenuCreate, MenuUpdate, MenuResponse, MenuListResponse
 from ..cruds.menu import MenuCRUD
 from ..database import get_db
+from ..routers.auth import get_current_shop_user
+from ..models.shop_users import ShopUsers
 
 router = APIRouter(prefix="/menus", tags=["menus"])
 
@@ -50,8 +52,22 @@ def get_menu(menu_id: int, db: Session = Depends(get_db)):
   return menu
 
 @router.post("/", response_model=MenuResponse)
-def create_menu(menu: MenuCreate, db: Session = Depends(get_db)):
+def create_menu(
+  menu: MenuCreate, 
+  db: Session = Depends(get_db),
+  current_shop_user: ShopUsers = Depends(get_current_shop_user)
+):
   """新しいメニューを作成"""
+  # 店舗ユーザーが自分の店舗のメニューのみ作成できるようにチェック
+  if menu.shop_id != current_shop_user.shop_id:
+    raise HTTPException(status_code=403, detail="You can only create menus for your own shop")
+  
+  crud = MenuCRUD(db)
+  return crud.create_menu(menu)
+
+@router.post("/test", response_model=MenuResponse)
+def create_menu_test(menu: MenuCreate, db: Session = Depends(get_db)):
+  """新しいメニューを作成（テスト用、認証なし）"""
   crud = MenuCRUD(db)
   return crud.create_menu(menu)
 

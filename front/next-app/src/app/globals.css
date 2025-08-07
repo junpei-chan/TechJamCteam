@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-:root {
-  /* ここは普通のCSSと同じように変数を定義します */
-}
-
-@theme {
-  /* Tailwind CSSのテーマ設定をここに記述します */
+/* Custom utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

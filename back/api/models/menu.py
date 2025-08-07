@@ -7,8 +7,8 @@ class Menu(Base):
     __tablename__ = "menus"
     
     id = Column(Integer, primary_key=True, index=True)
-    # shop_id = Column(Integer, ForeignKey("shops.id"), nullable=False)  # 一時的にコメントアウト
-    # genre_id = Column(Integer, ForeignKey("genres.id"), nullable=False)  # 一時的にコメントアウト
+    shop_id = Column(Integer, ForeignKey("shops.id"), nullable=False)
+    genre_id = Column(Integer, nullable=True)  # 外部キー制約を一時的に削除
     name = Column(String(100), nullable=False, index=True)
     description = Column(Text)
     price = Column(Float, nullable=False)
@@ -18,7 +18,7 @@ class Menu(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    # shop = relationship("Shop", back_populates="menus")  # 一時的にコメントアウト
+    shop = relationship("Shop", back_populates="menus")
     
     def __repr__(self):
         return f"<Menu(name='{self.name}', price={self.price})>"

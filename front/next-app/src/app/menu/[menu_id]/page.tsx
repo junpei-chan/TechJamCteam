@@ -2,26 +2,32 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { MenuIndex } from "@/api/menu/menuIndex";
-import { MenuIndexRequest } from "@/api/menu/menuIndex";
+import { MenuDetail } from "@/api/menu/menuDetail";
+import { MenuDetailRequest } from "@/api/menu/menuDetail";
 import Image from "next/image";
 
-export default function MenuDetail() {
+export default function MenuDetailPage() {
   const params = useParams();
   const menuId = params.menu_id as string;
-  const [menu, setMenu] = useState<MenuIndexRequest | null>(null);
+  const [menu, setMenu] = useState<MenuDetailRequest | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMenu = async () => {
-      // 全メニューを取得して特定のIDのメニューを見つける
-      // 本来は個別メニュー取得APIが望ましい
-      const response = await MenuIndex();
+      setLoading(true);
+      setError(null);
+      
+      const response = await MenuDetail(menuId);
 
       if (response.success) {
-        const foundMenu = response.menus.find(m => m.id?.toString() === menuId);
-        setMenu(foundMenu || null);
+        setMenu(response.menu);
+      } else {
+        setError(response.messages.join(", "));
       }
+      setLoading(false);
     };
+    
     if (menuId) {
       fetchMenu();
     }
@@ -30,7 +36,11 @@ export default function MenuDetail() {
     <main>
       <h1>Menu Detail</h1>
 
-      {menu ? (
+      {loading ? (
+        <p>読み込み中...</p>
+      ) : error ? (
+        <p>エラー: {error}</p>
+      ) : menu ? (
         <div>
           <h2>{menu.name}</h2>
           <p>{menu.description}</p>
@@ -41,6 +51,8 @@ export default function MenuDetail() {
             height={200}
           />
           <p>¥{menu.price}</p>
+          {menu.category && <p>カテゴリ: {menu.category}</p>}
+          <p>利用可能: {menu.is_available ? "はい" : "いいえ"}</p>
         </div>
       ) : (
         <p>メニューが見つかりません</p>

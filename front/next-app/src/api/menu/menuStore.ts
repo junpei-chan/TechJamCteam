@@ -2,7 +2,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 export type MenuStoreRequest = {
-  id: number;
   shop_id: number;
   genre_id?: number;
   name: string;
@@ -14,7 +13,18 @@ export type MenuStoreRequest = {
 export type MenuStoreResponse = 
   | {
     success: true;
-    menu: MenuStoreRequest;
+    menu: {
+      id: number;
+      shop_id: number;
+      genre_id?: number;
+      name: string;
+      description: string;
+      image_url: string;
+      price: number;
+      is_available: boolean;
+      created_at: string;
+      updated_at?: string;
+    };
     messages?: string;
     access_token: string;
   }
@@ -24,15 +34,22 @@ export type MenuStoreResponse =
   };
 
 export async function menuStore(request: MenuStoreRequest) {
-  const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/menus`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/menus/test`; // 一時的にテスト用エンドポイント
   const authToken = Cookies.get("authToken");
 
   return axios
-    .post<MenuStoreRequest>(apiUrl, request, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    })
+    .post<{
+      id: number;
+      shop_id: number;
+      genre_id?: number;
+      name: string;
+      description: string;
+      image_url: string;
+      price: number;
+      is_available: boolean;
+      created_at: string;
+      updated_at?: string;
+    }>(apiUrl, request)
     .then((response) => {
       return {
         success: true,

@@ -36,13 +36,25 @@ def create_tables():
 
 app = FastAPI(title="Menu API", version="1.0.0")
 
-# CORS設定
+# CORS設定を強化
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3006", "http://localhost:3000"],  # フロントエンドのURL
+    allow_origins=[
+        "http://localhost:3006", 
+        "http://localhost:3000",
+        "http://127.0.0.1:3006",
+        "http://127.0.0.1:3000"
+    ],  # フロントエンドのURL
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=[
+        "Accept",
+        "Accept-Language",
+        "Content-Language",
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With"
+    ],
 )
 
 @app.on_event("startup")

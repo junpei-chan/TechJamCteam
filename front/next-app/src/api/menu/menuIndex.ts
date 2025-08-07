@@ -3,18 +3,25 @@ import Cookies from "js-cookie";
 
 export type MenuIndexRequest = {
   id: number;
-  // shop_id: number;  // 一時的にコメントアウト
-  // genre_id?: number;  // 一時的にコメントアウト
+  shop_id: number;
+  genre_id?: number;
   name: string;
   description: string;
   image_url: string;
   price: number;
+  category?: string;
+  is_available: boolean;
+  created_at: string;
+  updated_at?: string;
 }
 
 export type MenuIndexResponse = 
   | {
     success: true;
-    menus: MenuIndexRequest[];
+    items: MenuIndexRequest[];
+    total: number;
+    page: number;
+    per_page: number;
     messages?: string;
     access_token: string;
   }
@@ -28,17 +35,21 @@ export async function MenuIndex() {
   const authToken = Cookies.get("authToken");
 
   return axios
-    .get<MenuIndexRequest[]>(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    })
+    .get<{
+      items: MenuIndexRequest[];
+      total: number;
+      page: number;
+      per_page: number;
+    }>(apiUrl)
     .then((response) => {
       return {
         success: true,
-        menus: response.data,
+        items: response.data.items,
+        total: response.data.total,
+        page: response.data.page,
+        per_page: response.data.per_page,
         access_token: authToken || "",
-        messages: response.data.length > 0 ? "Menus fetched successfully" : "No menus found",
+        messages: response.data.items.length > 0 ? "Menus fetched successfully" : "No menus found",
       } as MenuIndexResponse;
     })
     .catch((error) => {

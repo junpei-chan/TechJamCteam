@@ -3,8 +3,8 @@ from typing import Optional, List
 from .menu import MenuBase
 
 class ShopBase(BaseModel):
-  area_id: str
-  shop_name: str
+  area_id: int
+  name: str
   shop_detail: Optional[str] = None
   image_path: Optional[str] = None
   homepage_url: Optional[str] = None
@@ -21,16 +21,16 @@ class ShopRead(ShopBase):
     from_attributes = True
 
 class ShopUpdate(BaseModel):
-  area_id: Optional[str]
-  shop_name: Optional[str]
-  shop_detail: Optional[str]
-  image_path: Optional[str]
-  homepage_url: Optional[str]
-  address: Optional[str]
-  phone: Optional[str]
+  area_id: Optional[int] = None
+  name: Optional[str] = None
+  shop_detail: Optional[str] = None
+  image_path: Optional[str] = None
+  homepage_url: Optional[str] = None
+  address: Optional[str] = None
+  phone: Optional[str] = None
 
 class ShopWithMenus(BaseModel):
-  shop_name: str
+  name: str
   menus: List[MenuBase]
 
   class Config:
