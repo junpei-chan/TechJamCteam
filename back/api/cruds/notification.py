@@ -24,9 +24,7 @@ class NotificationCRUD:
     notification = self.db.query(Notification).filter(Notification.notification_id == notification_id).first()
     if not notification:
       return None
-    if notification:
-      notification.status = "read"
-      self.db.commit()
-      self.db.refresh(notification)
-      return notification
-    return None   # 該当なし
+    notification.status = "read"
+    self.db.commit()
+    self.db.refresh(notification)
+    return notification
