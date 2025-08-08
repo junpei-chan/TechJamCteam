@@ -14,7 +14,7 @@ class Notification(Base):
   created_at = Column(DateTime(timezone=True), server_default=func.now())
   status = Column(String, default="unread")                                                    # 既読・未読
 
-  user = relationship("Users")
+  user = relationship("Users", back_populates="notifications")
   shop = relationship("Shop")
   shop_user = relationship("ShopUsers")
 
