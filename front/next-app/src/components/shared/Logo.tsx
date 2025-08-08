@@ -5,7 +5,7 @@ export function Logo() {
   return (
     <Link href="/">
       <Image 
-        src="/logo.png"
+        src="/logo.svg"
         alt="Logo"
         width={115}
         height={60}

@@ -4,6 +4,7 @@
   --main-color: #F7B225;
   --accent-color: #D74D13;
   --base-color: #FBF8F3;
+  --light-black-color: #000000;
 }
 
 /* Custom utilities */
@@ -19,4 +20,9 @@
   --color-main: var(--main-color);
   --color-accent: var(--accent-color);
   --color-base: var(--base-color);
+  --color-light-black: var(--light-black-color) opacity(0.6);
+
+  --text-large: 20px;
+  --text-normal: 16px;
+  --text-small: 14px;
 }

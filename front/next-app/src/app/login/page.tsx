@@ -165,17 +165,35 @@ export default function Login() {
           </div>
         )}
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            アカウントをお持ちでないですか？{" "}
-            <a href="/register" className="text-blue-600 hover:underline">
-              一般ユーザー登録
-            </a>
-            {" "}または{" "}
-            <a href="/register/shop" className="text-blue-600 hover:underline">
-              店舗登録
-            </a>
-          </p>
+        <div className="mt-6 space-y-4">
+          {/* 新規登録案内 */}
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h3 className="font-semibold text-blue-800 mb-2">初回利用の方</h3>
+            <p className="text-blue-700 text-sm mb-3">
+              アカウントを作成してサービスをご利用ください
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <a 
+                href="/register" 
+                className="block bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 text-sm"
+              >
+                一般ユーザー登録
+              </a>
+              <a 
+                href="/register/shop" 
+                className="block bg-green-600 text-white text-center py-2 px-4 rounded-md hover:bg-green-700 text-sm"
+              >
+                店舗登録
+              </a>
+            </div>
+          </div>
+
+          {/* 既存ユーザー向け案内 */}
+          <div className="text-center text-sm text-gray-600">
+            <p>
+              既にアカウントをお持ちの方は上記フォームからログインしてください
+            </p>
+          </div>
         </div>
       </div>
     </main>

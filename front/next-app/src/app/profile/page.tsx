@@ -3,33 +3,27 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getUserProfile, UserProfile } from "../../api/auth/getUserProfile";
-import Cookies from "js-cookie";
+import { useAuth, useLogout } from "../../hooks/useAuth";
 
 export default function Profile() {
   const router = useRouter();
+  const { isAuthenticated, userType, token, isLoading } = useAuth(true);
+  const logout = useLogout();
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        const token = Cookies.get("authToken");
-        const userType = Cookies.get("userType");
-
-        if (!token) {
-          router.push("/login");
-          return;
-        }
-
+      if (!token || userType === "shop") {
         if (userType === "shop") {
-          // 店舗ユーザーの場合は店舗プロフィールページにリダイレクト
-          // 今回は一般ユーザーのプロフィールなので、エラー表示
           setError("このページは一般ユーザー専用です");
-          setLoading(false);
-          return;
         }
+        return;
+      }
 
+      setProfileLoading(true);
+      try {
         const result = await getUserProfile(token);
         
         if (result.success) {
@@ -38,26 +32,34 @@ export default function Profile() {
           setError(result.messages.join(", "));
           // 認証エラーの場合はログインページへリダイレクト
           if (result.messages.some(msg => msg.includes("認証") || msg.includes("unauthorized"))) {
-            router.push("/login");
+            logout();
           }
         }
       } catch (err) {
         setError("プロフィール情報の取得中にエラーが発生しました");
       } finally {
-        setLoading(false);
+        setProfileLoading(false);
       }
     };
 
-    fetchProfile();
-  }, [router]);
+    if (!isLoading && isAuthenticated) {
+      fetchProfile();
+    }
+  }, [isLoading, isAuthenticated, token, userType, logout]);
 
-  const handleLogout = () => {
-    Cookies.remove("authToken");
-    Cookies.remove("userType");
-    router.push("/login");
-  };
+  // 認証チェック中はローディング表示
+  if (isLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">認証確認中...</p>
+        </div>
+      </main>
+    );
+  }
 
-  if (loading) {
+  if (profileLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -109,7 +111,7 @@ export default function Profile() {
               </div>
               <div className="text-right">
                 <button
-                  onClick={handleLogout}
+                  onClick={logout}
                   className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
                 >
                   ログアウト

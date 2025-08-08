@@ -50,7 +50,9 @@ app.add_middleware(
         "http://localhost:3006", 
         "http://localhost:3000",
         "http://127.0.0.1:3006",
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:3000",
+        "http://10.79.10.139:3006",  # 外部アクセス用
+        "http://10.79.10.139:3000"   # 外部アクセス用
     ],  # フロントエンドのURL
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
