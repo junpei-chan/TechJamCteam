@@ -113,9 +113,10 @@ export default function Profile() {
               alt="right-arrow-icon"
               width={24}
               height={24}
+              className="w-8 h-8"
             />
           </Link>
-          <Link href="/profile/edit" className="flex justify-center items-center gap-14 w-[315px] h-19 py-7 px-8 mx-auto border border-black-30 rounded-full">
+          <Link href="/profile/personal-info" className="flex justify-center items-center gap-14 w-[315px] h-19 py-7 px-8 mx-auto border border-black-30 rounded-full">
             <Image 
               src="/icons/settings-icon.svg"
               alt="settings-icon"
@@ -128,6 +129,7 @@ export default function Profile() {
               alt="right-arrow-icon"
               width={24}
               height={24}
+              className="w-8 h-8"
             />
           </Link>
           <Link href="/favorite" className="flex justify-center items-center gap-14 w-[315px] h-19 py-7 px-8 mx-auto border border-black-30 rounded-full">
@@ -143,6 +145,7 @@ export default function Profile() {
               alt="right-arrow-icon"
               width={24}
               height={24}
+              className="w-8 h-8"
             />
           </Link>
         </div>

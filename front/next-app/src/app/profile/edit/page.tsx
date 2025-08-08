@@ -138,7 +138,7 @@ export default function Edit() {
 
       <form className="flex flex-col items-center justify-center mt-48" onSubmit={(e) => e.preventDefault()}>
         <div className="flex flex-col items-center gap-4">
-          <label htmlFor="username" className="w-full px-2">新しいユーザー名を入力</label>
+          <label htmlFor="username" className="w-full px-2">ユーザー名を変更</label>
           <input 
             type="text" 
             id="username"
