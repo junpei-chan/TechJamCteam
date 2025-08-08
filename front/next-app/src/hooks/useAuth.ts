@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -24,7 +24,6 @@ export function useAuth(requireAuth: boolean = true): AuthState {
       const userType = Cookies.get("userType");
 
       if (requireAuth && !token) {
-        // 認証が必要で、トークンがない場合はログインページにリダイレクト
         router.push("/login");
         return;
       }
@@ -38,7 +37,7 @@ export function useAuth(requireAuth: boolean = true): AuthState {
     };
 
     checkAuth();
-  }, [router, requireAuth]);
+  }, [requireAuth]); // routerを依存配列から削除
 
   return authState;
 }
@@ -46,11 +45,11 @@ export function useAuth(requireAuth: boolean = true): AuthState {
 export function useLogout() {
   const router = useRouter();
 
-  const logout = () => {
+  const logout = useCallback(() => {
     Cookies.remove("authToken");
     Cookies.remove("userType");
     router.push("/login");
-  };
+  }, [router]);
 
   return logout;
 }

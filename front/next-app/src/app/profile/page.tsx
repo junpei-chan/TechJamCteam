@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getUserProfile, UserProfile } from "../../api/auth/getUserProfile";
 import { useAuth, useLogout } from "../../hooks/useAuth";
+import { Header, GeneralFooter } from "@/components/shared";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Profile() {
   const router = useRouter();
@@ -30,7 +33,6 @@ export default function Profile() {
           setUser(result.user);
         } else {
           setError(result.messages.join(", "));
-          // 認証エラーの場合はログインページへリダイレクト
           if (result.messages.some(msg => msg.includes("認証") || msg.includes("unauthorized"))) {
             logout();
           }
@@ -45,9 +47,8 @@ export default function Profile() {
     if (!isLoading && isAuthenticated) {
       fetchProfile();
     }
-  }, [isLoading, isAuthenticated, token, userType, logout]);
+  }, [isLoading, isAuthenticated, token, userType]); // logoutを依存配列から削除
 
-  // 認証チェック中はローディング表示
   if (isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -99,113 +100,69 @@ export default function Profile() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* ヘッダー */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-white">プロフィール</h1>
-                <p className="text-blue-100 mt-1">一般ユーザー</p>
-              </div>
-              <div className="text-right">
-                <button
-                  onClick={logout}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
-                >
-                  ログアウト
-                </button>
-              </div>
-            </div>
-          </div>
+    <main>
+      <Header />
 
-          {/* ユーザー情報 */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ユーザーID
-                  </label>
-                  <div className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900">
-                    #{user.id}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ユーザー名
-                  </label>
-                  <div className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900">
-                    {user.username}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    メールアドレス
-                  </label>
-                  <div className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900">
-                    {user.email}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    住所
-                  </label>
-                  <div className="px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900">
-                    {user.address || "未設定"}
-                  </div>
-                </div>
-              </div>
-
-              {/* アクション */}
-              <div className="space-y-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold text-blue-800 mb-2">アカウント情報</h3>
-                  <p className="text-blue-600 text-sm mb-4">
-                    プロフィール情報の編集やパスワードの変更は今後実装予定です。
-                  </p>
-                  <div className="space-y-2">
-                    <button
-                      className="w-full bg-gray-300 text-gray-500 py-2 px-4 rounded-md cursor-not-allowed"
-                      disabled
-                    >
-                      プロフィール編集（未実装）
-                    </button>
-                    <button
-                      className="w-full bg-gray-300 text-gray-500 py-2 px-4 rounded-md cursor-not-allowed"
-                      disabled
-                    >
-                      パスワード変更（未実装）
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold text-green-800 mb-2">機能</h3>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => router.push("/")}
-                      className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
-                    >
-                      ホームに戻る
-                    </button>
-                    <button
-                      onClick={() => router.push("/menu")}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                      メニューを見る
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="flex flex-col my-32">
+        <div className="flex flex-col justify-center items-center gap-4 mx-auto">
+          <Image
+            src="/icons/circle-icon.svg"
+            alt="circle-icon"
+            width={72}
+            height={72}
+          />
+          <h1 className="text-large">ユーザー名</h1>
+        </div>
+        <div className="flex flex-col items-center justify-center gap-7 mt-18">
+          <Link href="/profile/edit" className="flex justify-center items-center gap-14 w-[315px] h-19 py-7 px-8 mx-auto border border-black-30 rounded-full">
+            <Image 
+              src="/icons/user-icon.svg"
+              alt="user-icon"
+              width={24}
+              height={24}
+            />
+            <span className="whitespace-nowrap">プロフィール</span>
+            <Image 
+              src="/icons/right-arrow-icon.svg"
+              alt="right-arrow-icon"
+              width={24}
+              height={24}
+            />
+          </Link>
+          <Link href="/profile/edit" className="flex justify-center items-center gap-14 w-[315px] h-19 py-7 px-8 mx-auto border border-black-30 rounded-full">
+            <Image 
+              src="/icons/settings-icon.svg"
+              alt="settings-icon"
+              width={24}
+              height={24}
+            />
+            <span className="whitespace-nowrap">個人の情報</span>
+            <Image 
+              src="/icons/right-arrow-icon.svg"
+              alt="right-arrow-icon"
+              width={24}
+              height={24}
+            />
+          </Link>
+          <Link href="/favorite" className="flex justify-center items-center gap-14 w-[315px] h-19 py-7 px-8 mx-auto border border-black-30 rounded-full">
+            <Image 
+              src="/icons/favorite-icon.svg"
+              alt="favorite-icon"
+              width={24}
+              height={24}
+            />
+            <span className="whitespace-nowrap">お気に入り</span>
+            <Image 
+              src="/icons/right-arrow-icon.svg"
+              alt="right-arrow-icon"
+              width={24}
+              height={24}
+            />
+          </Link>
         </div>
       </div>
+
+      <GeneralFooter />
     </main>
   );
 }

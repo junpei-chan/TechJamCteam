@@ -13,7 +13,7 @@ export function GeneralFooter() {
         />
       </Link>
 
-      <Link href="/">
+      <Link href="/favorite">
         <Image
           src="/icons/favorite-icon.svg"
           alt="お気に入り"

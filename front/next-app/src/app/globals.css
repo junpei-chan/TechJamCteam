@@ -20,7 +20,8 @@
   --color-main: var(--main-color);
   --color-accent: var(--accent-color);
   --color-base: var(--base-color);
-  --color-light-black: var(--light-black-color) opacity(0.6);
+  --color-black-30: var(--light-black-color) opacity(0.3);
+  --color-black-60: var(--light-black-color) opacity(0.6);
 
   --text-large: 20px;
   --text-normal: 16px;
