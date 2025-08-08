@@ -117,99 +117,10 @@ export function MenuList() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 mb-18">
-      <h1 className="text-3xl font-bold text-center mb-8">メニュー一覧</h1>
-      
+    <div className="container mx-auto px-4 py-4 mt-[182px] mb-18">      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {menus.map((menu) => (
-          <div 
-            key={menu.id} 
-            className="bg-white rounded-lg shadow-md overflow-hidden relative cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => handleMenuClick(menu.id)}
-          >
-            {/* 削除ボタン */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // カードクリックイベントを防ぐ
-                handleDeleteClick(menu);
-              }}
-              disabled={deletingMenuId === menu.id}
-              className="absolute top-2 right-2 z-10 bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold transition-colors"
-              title="メニューを削除"
-            >
-              {deletingMenuId === menu.id ? '...' : '×'}
-            </button>
-
-            <div className="relative h-48">
-              {/* Next.js Imageの代わりに通常のimgタグを使用 */}
-              <img
-                src={getImageSrc(menu)}
-                alt={menu.name}
-                className="w-full h-full object-cover"
-                onError={() => handleImageError(menu.id)}
-              />
-            </div>
-            
-            <div className="p-4">
-              <h3 className="text-xl font-semibold mb-2">{menu.name}</h3>
-              <p className="text-gray-600 mb-3 line-clamp-2">{menu.description}</p>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-blue-600">
-                  ¥{menu.price.toLocaleString()}
-                </span>
-                <span className={`px-2 py-1 rounded text-sm ${
-                  menu.is_available 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-                }`}>
-                  {menu.is_available ? '利用可能' : '利用不可'}
-                </span>
-              </div>
-              
-              {menu.category && (
-                <div className="mt-2">
-                  <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
-                    {menu.category}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+        
       </div>
-
-      {/* 削除確認モーダル */}
-      {showDeleteModal && menuToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h2 className="text-xl font-bold mb-4">メニュー削除の確認</h2>
-            <p className="text-gray-600 mb-4">
-              「{menuToDelete.name}」を削除しますか？
-            </p>
-            <p className="text-sm text-red-600 mb-6">
-              この操作は取り消すことができません。
-            </p>
-            
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={handleDeleteCancel}
-                disabled={deletingMenuId !== null}
-                className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={handleDeleteConfirm}
-                disabled={deletingMenuId !== null}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
-              >
-                {deletingMenuId !== null ? '削除中...' : '削除'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

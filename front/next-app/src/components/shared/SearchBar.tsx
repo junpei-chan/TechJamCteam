@@ -5,7 +5,7 @@ export function SearchBar() {
     <div>
       <ul className="flex text-[12px] justify-center py-4 gap-2">
         <li>
-          <p className="text-light-black">登録されている地域</p>
+          <p className="text-light-black">選択されている地域</p>
         </li>
         <li>
           <p className="text-main">選択されていません</p>

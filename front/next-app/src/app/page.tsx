@@ -10,7 +10,6 @@ import { useAuth, useLogout } from "../hooks/useAuth";
 
 export default function Top() {
   const { isAuthenticated, userType, isLoading } = useAuth(true);
-  const logout = useLogout();
 
   if (isLoading) {
     return (
@@ -25,7 +24,7 @@ export default function Top() {
 
   return (
     <main>
-      <header className="bg-base py-4 px-6">
+      <header className="fixed top-0 left-0 bg-base py-4 px-6 z-20">
         <div className="flex justify-between items-center max-w-md mx-auto">
           <span className="w-6"></span>
 
