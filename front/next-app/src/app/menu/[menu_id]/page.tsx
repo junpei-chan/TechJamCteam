@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { MenuDetail, MenuDetailRequest } from "@/api/menu/menuDetail";
 import { ShopDetail, ShopDetailRequest } from "@/api/shop/shopDetail";
-import { MenuByShop, MenuByShopResponse } from "@/api/menu/menuByShop";
+import { MenuByShop } from "@/api/menu/menuByShop";
 import { MenuIndexRequest } from "@/api/menu/menuIndex";
 import { Header } from "@/components/shared";
 import { GeneralFooter } from "@/components/shared";
+import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function MenuDetailPage() {
   const params = useParams();
@@ -67,12 +69,6 @@ export default function MenuDetailPage() {
 
   const handleImageError = () => {
     setImageError(true);
-  };
-
-  const handleShopClick = () => {
-    if (menu?.shop_id) {
-      router.push(`/shop/${menu.shop_id}`);
-    }
   };
 
   const handleMenuClick = (menuId: number) => {
@@ -154,7 +150,7 @@ export default function MenuDetailPage() {
             <div className="w-full flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <h1 className="text-large font-bold">{menu.name}</h1>
-                <p className="text-normal font-semibold">¥{menu.price}</p>
+                <p className="text-normal font-semibold">¥{formatPrice(menu.price)}</p>
               </div>
 
               <div className="flex gap-5 justify-end">
@@ -203,7 +199,11 @@ export default function MenuDetailPage() {
 
           {menu.shop_id && shop && (
             <div className="px-6 py-4 mb-18">
-              <h3 className="text-normal mb-3">{shop.name}</h3>
+              <h3 className="inline-block text-normal text-accent mb-3 border-b-1 px-1">
+                <Link href={`/shop/${shop.id}`}>
+                  {shop.name}
+                </Link>
+              </h3>
               <p className="text-small">[他のおすすめのメニュー]</p>
               {shopMenus.length > 0 ? (
                 <div className="mt-4 pb-2">
@@ -258,5 +258,5 @@ export default function MenuDetailPage() {
 
       <GeneralFooter />
     </div>
-  )
+  );
 }

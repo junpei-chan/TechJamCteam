@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { useState } from "react"
+import { formatPrice } from "@/utils/formatPrice"
 
 type MenuItemProps = {
   image_url: string;
@@ -30,7 +31,7 @@ export function MenuItem({
       />
       <div>
         <p>{name}</p>
-        <p>¥{price}</p>
+        <p>¥{formatPrice(price)}</p>
       </div>
     </div>
   )

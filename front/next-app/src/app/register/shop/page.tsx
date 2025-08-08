@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ShopSignup, ShopSignupRequest } from "../../../api/auth/shopRegister";
+import { checkUsernameAvailability, checkEmailAvailability } from "../../../api/auth/checkAvailability";
 
 export default function ShopRegister() {
   const router = useRouter();
@@ -20,6 +21,97 @@ export default function ShopRegister() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<{
+    checking: boolean;
+    available: boolean | null;
+    message: string;
+  }>({ checking: false, available: null, message: "" });
+  const [emailStatus, setEmailStatus] = useState<{
+    checking: boolean;
+    available: boolean | null;
+    message: string;
+  }>({ checking: false, available: null, message: "" });
+
+  const debounce = <T extends (...args: any[]) => void>(
+    func: T,
+    delay: number
+  ): T => {
+    let timeoutId: NodeJS.Timeout;
+    return ((...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    }) as T;
+  };
+
+  const checkUsername = useCallback(
+    debounce(async (username: string) => {
+      if (!username.trim()) {
+        setUsernameStatus({ checking: false, available: null, message: "" });
+        return;
+      }
+
+      setUsernameStatus({ checking: true, available: null, message: "" });
+      
+      try {
+        const result = await checkUsernameAvailability(username);
+        setUsernameStatus({
+          checking: false,
+          available: result.available,
+          message: result.available 
+            ? "このユーザー名は利用可能です" 
+            : "このユーザー名は既に使用されています"
+        });
+      } catch (error) {
+        setUsernameStatus({
+          checking: false,
+          available: false,
+          message: "ユーザー名の確認中にエラーが発生しました"
+        });
+      }
+    }, 500),
+    []
+  );
+
+  const checkEmail = useCallback(
+    debounce(async (email: string) => {
+      if (!email.trim()) {
+        setEmailStatus({ checking: false, available: null, message: "" });
+        return;
+      }
+
+      setEmailStatus({ checking: true, available: null, message: "" });
+      
+      try {
+        const result = await checkEmailAvailability(email);
+        setEmailStatus({
+          checking: false,
+          available: result.available,
+          message: result.available 
+            ? "このメールアドレスは利用可能です" 
+            : "このメールアドレスは既に使用されています"
+        });
+      } catch (error) {
+        setEmailStatus({
+          checking: false,
+          available: false,
+          message: "メールアドレスの確認中にエラーが発生しました"
+        });
+      }
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    if (formData.username) {
+      checkUsername(formData.username);
+    }
+  }, [formData.username, checkUsername]);
+
+  useEffect(() => {
+    if (formData.email) {
+      checkEmail(formData.email);
+    }
+  }, [formData.email, checkEmail]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -48,6 +140,19 @@ export default function ShopRegister() {
       return;
     }
 
+    // ユーザー名とメールアドレスの可用性チェック
+    if (usernameStatus.available === false) {
+      setError("ユーザー名が既に使用されています。別のユーザー名を選択してください。");
+      setLoading(false);
+      return;
+    }
+
+    if (emailStatus.available === false) {
+      setError("メールアドレスが既に使用されています。別のメールアドレスを使用してください。");
+      setLoading(false);
+      return;
+    }
+
     try {
       const result = await ShopSignup({ request: formData });
       
@@ -57,7 +162,17 @@ export default function ShopRegister() {
           router.push("/login");
         }, 2000);
       } else {
-        setError(Array.isArray(result.messages) ? result.messages.join(", ") : result.messages);
+        // より詳細なエラーメッセージを表示
+        let errorMessage = Array.isArray(result.messages) ? result.messages.join(", ") : result.messages;
+        
+        // 特定のエラーメッセージを日本語に翻訳
+        if (errorMessage.includes("Username already registered")) {
+          errorMessage = "ユーザー名が既に登録されています。別のユーザー名を選択してください。";
+        } else if (errorMessage.includes("Email already registered")) {
+          errorMessage = "メールアドレスが既に登録されています。別のメールアドレスを使用してください。";
+        }
+        
+        setError(errorMessage);
       }
     } catch (err) {
       setError("登録処理中にエラーが発生しました");
@@ -115,9 +230,25 @@ export default function ShopRegister() {
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  usernameStatus.available === false ? 'border-red-500' : 
+                  usernameStatus.available === true ? 'border-green-500' : 
+                  'border-gray-300'
+                }`}
                 required
               />
+              {usernameStatus.checking && (
+                <p className="text-sm text-gray-500 mt-1">
+                  ユーザー名を確認中...
+                </p>
+              )}
+              {usernameStatus.message && !usernameStatus.checking && (
+                <p className={`text-sm mt-1 ${
+                  usernameStatus.available ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {usernameStatus.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -131,9 +262,25 @@ export default function ShopRegister() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                emailStatus.available === false ? 'border-red-500' : 
+                emailStatus.available === true ? 'border-green-500' : 
+                'border-gray-300'
+              }`}
               required
             />
+            {emailStatus.checking && (
+              <p className="text-sm text-gray-500 mt-1">
+                メールアドレスを確認中...
+              </p>
+            )}
+            {emailStatus.message && !emailStatus.checking && (
+              <p className={`text-sm mt-1 ${
+                emailStatus.available ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {emailStatus.message}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -234,8 +381,22 @@ export default function ShopRegister() {
 
           <button 
             type="submit" 
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
+            disabled={
+              loading || 
+              usernameStatus.available === false || 
+              emailStatus.available === false ||
+              usernameStatus.checking ||
+              emailStatus.checking
+            }
+            className={`w-full py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium ${
+              loading || 
+              usernameStatus.available === false || 
+              emailStatus.available === false ||
+              usernameStatus.checking ||
+              emailStatus.checking
+                ? 'bg-gray-400 cursor-not-allowed text-white'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
           >
             {loading ? "登録中..." : "店舗を登録"}
           </button>
