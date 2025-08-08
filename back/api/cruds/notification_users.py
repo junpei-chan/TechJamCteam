@@ -1,10 +1,8 @@
 from sqlalchemy.orm import Session
 from ..models.notification_users import NotificationUsers
 from ..schemas.notification_users import NotificationUsersCreate
-from typing import List, Optional
 
 class NotificationUsersCRUD:
-  
   def __init__(self, db: Session):
     self.db = db
   
