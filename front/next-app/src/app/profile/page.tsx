@@ -2,63 +2,67 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getUserProfile, UserProfile } from "../../api/auth/getUserProfile";
-import { useAuth, useLogout } from "../../hooks/useAuth";
 import { Header, GeneralFooter } from "@/components/shared";
 import Image from "next/image";
 import Link from "next/link";
 
+type UserProfile = {
+  id: number;
+  username: string;
+  email: string;
+  address?: string;
+};
+
 export default function Profile() {
   const router = useRouter();
-  const { isAuthenticated, userType, token, isLoading } = useAuth(true);
-  const logout = useLogout();
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [profileLoading, setProfileLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!token || userType === "shop") {
-        if (userType === "shop") {
-          setError("このページは一般ユーザー専用です");
-        }
-        return;
-      }
-
-      setProfileLoading(true);
+    const loadProfile = () => {
       try {
-        const result = await getUserProfile(token);
+        // ローカルストレージからユーザー情報を取得
+        const savedProfile = localStorage.getItem("userProfile");
         
-        if (result.success) {
-          setUser(result.user);
+        if (savedProfile) {
+          const userData = JSON.parse(savedProfile);
+          setUser(userData);
         } else {
-          setError(result.messages.join(", "));
-          if (result.messages.some(msg => msg.includes("認証") || msg.includes("unauthorized"))) {
-            logout();
-          }
+          // デフォルトのユーザー情報を設定
+          const defaultUser = {
+            id: 1,
+            username: "サンプルユーザー",
+            email: "user@example.com",
+            address: "東京都"
+          };
+          setUser(defaultUser);
+          localStorage.setItem("userProfile", JSON.stringify(defaultUser));
         }
-      } catch (err) {
-        setError("プロフィール情報の取得中にエラーが発生しました");
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        // エラーの場合はデフォルト値を設定
+        const defaultUser = {
+          id: 1,
+          username: "サンプルユーザー",
+          email: "user@example.com",
+          address: "東京都"
+        };
+        setUser(defaultUser);
       } finally {
         setProfileLoading(false);
       }
     };
 
-    if (!isLoading && isAuthenticated) {
-      fetchProfile();
-    }
-  }, [isLoading, isAuthenticated, token, userType]); // logoutを依存配列から削除
+    loadProfile();
 
-  if (isLoading) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">認証確認中...</p>
-        </div>
-      </main>
-    );
-  }
+    // ページがフォーカスされた時（編集ページから戻った時など）に再読み込み
+    const handleFocus = () => {
+      loadProfile();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
 
   if (profileLoading) {
     return (
@@ -66,24 +70,6 @@ export default function Profile() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">プロフィールを読み込み中...</p>
-        </div>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-red-600 mb-4">エラー</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => router.push("/login")}
-            className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-          >
-            ログインページへ
-          </button>
         </div>
       </main>
     );
@@ -111,7 +97,7 @@ export default function Profile() {
             width={72}
             height={72}
           />
-          <h1 className="text-large">ユーザー名</h1>
+          <h1 className="text-large">{user.username}</h1>
         </div>
         <div className="flex flex-col items-center justify-center gap-7 mt-18">
           <Link href="/profile/edit" className="flex justify-center items-center gap-14 w-[315px] h-19 py-7 px-8 mx-auto border border-black-30 rounded-full">

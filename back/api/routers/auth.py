@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..schemas.auth import (
-  UserCreate, UserResponse, UserLogin,
+  UserCreate, UserResponse, UserLogin, UserUpdate,
   ShopUserCreate, ShopUserResponse, ShopUserLogin,
   Token, TokenData
 )
 from ..cruds.auth import (
   create_user, authenticate_user, get_user_by_username, get_user_by_email,
-  create_shop_user, authenticate_shop_user, get_shop_user_by_username, get_shop_user_by_email
+  create_shop_user, authenticate_shop_user, get_shop_user_by_username, get_shop_user_by_email,
+  update_user
 )
 from ..auth import create_access_token, verify_token, ACCESS_TOKEN_EXPIRE_MINUTES
 
@@ -165,6 +166,41 @@ def login_shop_user_for_access_token(shop_user_login: ShopUserLogin, db: Session
 def read_users_me(current_user: UserResponse = Depends(get_current_user)):
   """現在の一般ユーザー情報を取得"""
   return current_user
+
+@router.put("/me", response_model=UserResponse)
+def update_current_user(user_update: UserUpdate, current_user: UserResponse = Depends(get_current_user), db: Session = Depends(get_db)):
+  """現在のユーザー情報を更新"""
+  # ユーザー名が変更される場合は重複チェック
+  if user_update.username and user_update.username != current_user.username:
+    if get_user_by_username(db, user_update.username):
+      raise HTTPException(
+        status_code=400,
+        detail="Username already registered as general user"
+      )
+    if get_shop_user_by_username(db, user_update.username):
+      raise HTTPException(
+        status_code=400,
+        detail="Username already registered as shop user"
+      )
+  
+  # メールアドレスが変更される場合は重複チェック
+  if user_update.email and user_update.email != current_user.email:
+    if get_user_by_email(db, user_update.email):
+      raise HTTPException(
+        status_code=400,
+        detail="Email already registered as general user"
+      )
+    if get_shop_user_by_email(db, user_update.email):
+      raise HTTPException(
+        status_code=400,
+        detail="Email already registered as shop user"
+      )
+  
+  updated_user = update_user(db, current_user.id, user_update)
+  if not updated_user:
+    raise HTTPException(status_code=404, detail="User not found")
+  
+  return updated_user
 
 @router.get("/shop/me", response_model=ShopUserResponse)
 def read_shop_users_me(current_shop_user: ShopUserResponse = Depends(get_current_shop_user)):
