@@ -7,7 +7,7 @@ import { ShopDetail, ShopDetailRequest } from "@/api/shop/shopDetail";
 import { MenuByShop } from "@/api/menu/menuByShop";
 import { MenuIndexRequest } from "@/api/menu/menuIndex";
 import { Header } from "@/components/shared";
-import { GeneralFooter } from "@/components/shared";
+import { ConditionalFooter } from "@/components/shared";
 import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
 import Link from "next/link";
@@ -200,7 +200,7 @@ export default function MenuDetailPage() {
           {menu.shop_id && shop && (
             <div className="px-6 py-4 mb-18">
               <h3 className="inline-block text-normal text-accent mb-3 border-b-1 px-1">
-                <Link href={`/shop/${shop.id}`}>
+                <Link href={`/shop/${menu.shop_id}`}>
                   {shop.name}
                 </Link>
               </h3>
@@ -256,7 +256,7 @@ export default function MenuDetailPage() {
         </div>
       )}
 
-      <GeneralFooter />
+      <ConditionalFooter />
     </div>
   );
 }

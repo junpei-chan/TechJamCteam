@@ -4,8 +4,28 @@ import Image from "next/image"
 import { useState, useEffect } from "react"
 import { menuStore, MenuStoreRequest } from "@/api/menu/menuStore"
 import { uploadImage } from "@/api/upload/imageUpload"
+import { ConditionalFooter } from "@/components/shared"
+import { useAuth } from "@/hooks/useAuth"
+import { useRouter } from "next/navigation"
 
 export default function Post() {
+  const { isAuthenticated, userType, isLoading } = useAuth();
+  const router = useRouter();
+
+  // ローディング中または認証されていない場合、店舗ユーザー以外の場合はアクセス制限
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.push('/login');
+        return;
+      }
+      if (userType !== 'shop_user') {
+        router.push('/');
+        return;
+      }
+    }
+  }, [isAuthenticated, userType, isLoading, router]);
+
   const [formData, setFormData] = useState({
     name: "テストメニュー",
     price: "1000",
@@ -174,6 +194,15 @@ export default function Post() {
       setIsSubmitting(false);
     }
   };
+
+  // ローディング中または認証チェック中は何も表示しない
+  if (isLoading || !isAuthenticated || userType !== 'shop_user') {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-gray-500">読み込み中...</div>
+      </div>
+    );
+  }
 
   return (
     <main>
@@ -384,6 +413,8 @@ export default function Post() {
           {isSubmitting ? "投稿中..." : "投稿"}
         </button>
       </form>
+
+      <ConditionalFooter />
     </main>
   )
 }

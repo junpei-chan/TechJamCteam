@@ -2,12 +2,32 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { MenuList } from "@/components/features/menu/MenuList";
-import { Logo, SearchBar, GeneralFooter } from "@/components/shared/";
+import { Logo, SearchBar, ConditionalFooter } from "@/components/shared/";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Top() {
-  const { isAuthenticated, userType, isLoading } = useAuth(true);
+  const { isAuthenticated, userType, isLoading } = useAuth(false); // 認証を必須にしない
+  const [currentUserType, setCurrentUserType] = useState<string | null>(null);
+
+  useEffect(() => {
+    // ローカルストレージからユーザータイプを取得、存在しない場合はデフォルト設定
+    let savedUserType = localStorage.getItem("userType");
+    if (!savedUserType) {
+      savedUserType = "user"; // デフォルトは一般ユーザー
+      localStorage.setItem("userType", savedUserType);
+    }
+    setCurrentUserType(savedUserType);
+  }, []);
+
+  const toggleUserType = () => {
+    const newUserType = currentUserType === "shop_user" ? "user" : "shop_user";
+    localStorage.setItem("userType", newUserType);
+    setCurrentUserType(newUserType);
+    // ページをリロードしてフッターを更新
+    window.location.reload();
+  };
 
   if (isLoading) {
     return (
@@ -43,7 +63,7 @@ export default function Top() {
 
       <MenuList />
 
-      <GeneralFooter />
+      <ConditionalFooter />
     </main>
   );
 }

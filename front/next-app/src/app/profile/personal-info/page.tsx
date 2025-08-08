@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { ConditionalFooter } from "@/components/shared";
 
 export default function PersonalInfo() {
   const [email, setEmail] = useState("");
@@ -211,6 +212,8 @@ export default function PersonalInfo() {
           </button>
         </div>
       </form>
+
+      <ConditionalFooter />
     </main>
   );
 }

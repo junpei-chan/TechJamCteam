@@ -42,7 +42,7 @@ export default function Login() {
       
       if (response.success && "access_token" in response && response.access_token) {
         Cookies.set("authToken", String(response.access_token), { expires: 7 });
-        Cookies.set("userType", "shop", { expires: 7 });
+        Cookies.set("userType", "shop_user", { expires: 7 });
         router.push("/");
       } else {
         setErrors(

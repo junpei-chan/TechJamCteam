@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Next.js 15の新しい設定項目
+  serverExternalPackages: [],
+  // Webpack設定でバグを回避
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {

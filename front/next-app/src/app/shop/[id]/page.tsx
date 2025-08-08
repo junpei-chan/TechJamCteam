@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { Header } from '@/components/shared';
-import { GeneralFooter } from '@/components/shared';
+import { ConditionalFooter } from '@/components/shared';
 import { ShopDetail, ShopDetailRequest } from "@/api/shop/shopDetail";
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -112,7 +112,7 @@ export default function ShopDetailPage() {
         </div>
       </div>
 
-      <GeneralFooter />
+      <ConditionalFooter />
     </main>
   );
 }

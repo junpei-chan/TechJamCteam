@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Header, GeneralFooter } from "@/components/shared";
+import { Header, ConditionalFooter } from "@/components/shared";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -151,7 +151,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <GeneralFooter />
+      <ConditionalFooter />
     </main>
   );
 }
