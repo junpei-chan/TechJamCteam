@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routers import menu, users, shop, area, genre, menu_favorites, favorites, auth, notification
+from .routers import (
+  menu, users, shop, area, genre,
+  menu_favorites, favorites, auth,
+  notification, notification_users, notification_shop,
+)
 from .models import (
   users as user_models,
   area as area_models,
@@ -63,6 +67,8 @@ app.include_router(menu_favorites.router)
 app.include_router(favorites.router)
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(notification.router)
+app.include_router(notification_users.router)
+app.include_router(notification_shop.router)
 
 @app.get("/health")
 def health_check():
