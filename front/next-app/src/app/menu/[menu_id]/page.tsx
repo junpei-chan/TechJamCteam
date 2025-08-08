@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { MenuDetail } from "@/api/menu/menuDetail";
 import { MenuDetailRequest } from "@/api/menu/menuDetail";
-import Link from "next/link";
+import { Header } from "@/components/shared";
+import Image from "next/image";
 
 export default function MenuDetailPage() {
   const params = useParams();
@@ -25,9 +26,16 @@ export default function MenuDetailPage() {
     }
     // バックエンドの静的画像URLの場合、完全なURLを構築
     if (imageUrl && imageUrl.startsWith('/static/')) {
-      return `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`;
+      const fullUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`;
+      console.log('Generated image URL:', fullUrl); // デバッグ用
+      return fullUrl;
     }
+    console.log('Using original image URL:', imageUrl); // デバッグ用
     return imageUrl || '/menu-default.jpg';
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
   };
 
   const handleShopClick = () => {
@@ -56,23 +64,7 @@ export default function MenuDetailPage() {
     }
   }, [menuId]);
   return (
-    <main className="container mx-auto px-4 py-8">
-      {/* ナビゲーション */}
-      <nav className="bg-blue-600 text-white p-4 mb-8 rounded-lg">
-        <div className="flex flex-wrap gap-4">
-          <Link href="/" className="hover:bg-blue-700 px-3 py-2 rounded transition-colors">
-            メニュー一覧
-          </Link>
-          <Link href="/shops" className="hover:bg-blue-700 px-3 py-2 rounded transition-colors">
-            店舗一覧
-          </Link>
-          <Link href="/post" className="hover:bg-blue-700 px-3 py-2 rounded transition-colors">
-            メニュー投稿
-          </Link>
-        </div>
-      </nav>
-
-      <h1 className="text-3xl font-bold text-center mb-8">メニュー詳細</h1>
+    <div className="container mx-auto px-4 py-8">
 
       {loading ? (
         <div className="flex justify-center items-center p-8">
@@ -83,59 +75,88 @@ export default function MenuDetailPage() {
           <div className="text-red-500">エラー: {error}</div>
         </div>
       ) : menu ? (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-2xl mx-auto">
-          {/* メニュー画像 */}
-          <div className="relative h-64 bg-gray-200">
-            <img
-              src={getImageSrc(menu.image_url)}
-              alt={menu.name}
-              className="w-full h-full object-cover"
-              onError={() => setImageError(true)}
-            />
-          </div>
-
-          <div className="p-6">
-            {/* メニュー名 */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{menu.name}</h2>
-
-            {/* メニュー説明 */}
-            <p className="text-gray-600 mb-4 leading-relaxed">{menu.description}</p>
-
-            {/* 価格 */}
-            <div className="mb-4">
-              <span className="text-3xl font-bold text-blue-600">¥{menu.price.toLocaleString()}</span>
+        <div className="mt-20">
+          <Header />
+          
+          <div className="flex flex-col items-center space-y-6 p-6">
+            <div className="relative">
+              {imageError ? (
+                <img 
+                  src="/menu-default.jpg"
+                  alt={menu.name}
+                  width={350}
+                  height={200}
+                  className="object-cover w-[350px] h-[200px] rounded-md"
+                />
+              ) : (
+                <Image 
+                  src={menu.image_url ? getImageSrc(menu.image_url) : '/menu-default.jpg'}
+                  alt={menu.name}
+                  width={350}
+                  height={200}
+                  onError={handleImageError}
+                  className="object-cover w-[350px] h-[200px] rounded-md"
+                  unoptimized
+                />
+              )}
             </div>
+            
+            <div className="w-full flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <h1 className="text-large font-bold">{menu.name}</h1>
+                <p className="text-normal font-semibold">¥{menu.price}</p>
+              </div>
 
-            {/* メニュー情報 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {menu.category && (
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1">カテゴリ</h3>
-                  <p className="text-gray-600">{menu.category}</p>
+              <div className="flex gap-5 justify-end">
+                <button>
+                  <Image
+                    src="/icons/favorite-icon.svg"
+                    alt="お気に入り"
+                    width={20}
+                    height={20}
+                  />
+                </button>
+                <button>
+                  <Image
+                    src="/icons/send-icon.svg"
+                    alt="共有"
+                    width={20}
+                    height={20}
+                  />
+                </button>
+              </div>
+              
+              {menu.description && (
+                <p className="text-gray-600 text-small leading-6 break-words whitespace-normal">
+                  {menu.description}
+                </p>
+              )}
+              
+              {menu.shop_id && (
+                <div>
+                  {/* 店舗詳細を見る */}
                 </div>
               )}
-
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <h3 className="text-sm font-semibold text-gray-800 mb-1">利用可否</h3>
-                <span className={`inline-block px-2 py-1 rounded text-sm ${
-                  menu.is_available 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-                }`}>
-                  {menu.is_available ? '利用可能' : '利用不可'}
-                </span>
-              </div>
-            </div>
-
-            {/* 店舗詳細へのボタン */}
-            <div className="border-t pt-4">
-              <button
-                onClick={handleShopClick}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
-              >
-                <span className="mr-2">🏪</span>
-                この店舗の詳細を見る
-              </button>
+              
+              {menu.tags && menu.tags.length > 0 ? (
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500 mb-2">タグ</p>
+                  <div className="flex flex-wrap gap-2">
+                    {menu.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  タグはありません
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -144,6 +165,6 @@ export default function MenuDetailPage() {
           <div className="text-gray-500">メニューが見つかりませんでした</div>
         </div>
       )}
-    </main>
+    </div>
   )
 }

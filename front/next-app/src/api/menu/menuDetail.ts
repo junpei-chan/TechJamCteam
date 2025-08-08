@@ -9,6 +9,7 @@ export type MenuDetailRequest = {
   image_url: string;
   price: number;
   category?: string;
+  tags?: string[];
   is_available: boolean;
   created_at: string;
   updated_at?: string;

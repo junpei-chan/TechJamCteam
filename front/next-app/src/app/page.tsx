@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { MenuList } from "@/components/features/menu/MenuList";
 import { Logo, SearchBar, GeneralFooter } from "@/components/shared/";
-import { useAuth, useLogout } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Top() {
   const { isAuthenticated, userType, isLoading } = useAuth(true);
@@ -15,8 +13,8 @@ export default function Top() {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">認証確認中...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-main mx-auto"></div>
+          <p className="mt-4 text-gray-600">読み込み中...</p>
         </div>
       </main>
     );

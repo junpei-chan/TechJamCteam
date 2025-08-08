@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 class MenuBase(BaseModel):
@@ -9,6 +9,7 @@ class MenuBase(BaseModel):
   description: Optional[str] = None
   price: float = Field(..., gt=0)
   category: Optional[str] = Field(None, max_length=50)
+  tags: Optional[List[str]] = Field(default_factory=list, max_items=10)
   image_url: Optional[str] = None
   is_available: bool = True
 
@@ -25,6 +26,7 @@ class MenuUpdate(BaseModel):
   description: Optional[str] = None
   price: Optional[float] = Field(None, gt=0)
   category: Optional[str] = Field(None, max_length=50)
+  tags: Optional[List[str]] = Field(None, max_items=10)
   image_url: Optional[str] = None
   is_available: Optional[bool] = None
 

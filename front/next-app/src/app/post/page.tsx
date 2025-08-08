@@ -10,6 +10,7 @@ export default function Post() {
     name: "テストメニュー",
     price: "1000",
     description: "テスト説明",
+    tags: [] as string[],
     image_url: "",
     shop_id: 1,
     genre_id: 1
@@ -17,6 +18,7 @@ export default function Post() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [newTag, setNewTag] = useState("");
 
   // クリーンアップ: blob URLを解放
   useEffect(() => {
@@ -27,12 +29,51 @@ export default function Post() {
     };
   }, [formData.image_url]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+  };
+
+  const addTag = () => {
+    if (newTag.trim() && !formData.tags.includes(newTag.trim()) && formData.tags.length < 10) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, newTag.trim()]
+      }));
+      setNewTag("");
+    }
+  };
+
+  const addPredefinedTag = (tag: string) => {
+    if (!formData.tags.includes(tag) && formData.tags.length < 10) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, tag]
+      }));
+    }
+  };
+
+  const predefinedTags = [
+    "和食", "洋食", "中華", "イタリアン", "フレンチ", 
+    "カフェ", "ファストフード", "デザート", "ドリンク", "その他",
+    "ヘルシー", "辛い", "甘い", "おすすめ", "人気", "限定"
+  ];
+
+  const removeTag = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const handleTagKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTag();
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +139,8 @@ export default function Post() {
         name: formData.name,
         description: formData.description,
         image_url: imageUrl,
-        price: parseInt(formData.price) || 0
+        price: parseInt(formData.price) || 0,
+        tags: formData.tags.length > 0 ? formData.tags : undefined
       };
 
       console.log("Sending menu request:", menuRequest);
@@ -115,11 +157,13 @@ export default function Post() {
           name: "",
           price: "",
           description: "",
+          tags: [],
           image_url: "",
           shop_id: 1,
           genre_id: 1
         });
         setSelectedFile(null);
+        setNewTag("");
       } else {
         setMessage(`エラー: ${response.messages.join(", ")}`);
       }
@@ -224,6 +268,116 @@ export default function Post() {
             onChange={handleInputChange}
             required
           />
+        </div>
+
+        <div>
+          <label htmlFor="tags">タグ (最大10個)</label>
+          
+          {/* 事前定義されたタグ */}
+          <div style={{ marginBottom: "15px" }}>
+            <p style={{ fontSize: "14px", color: "#666", marginBottom: "8px" }}>
+              よく使われるタグ（クリックで追加）：
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+              {predefinedTags.map((tag) => {
+                const isAlreadyAdded = formData.tags.includes(tag);
+                const isMaxReached = formData.tags.length >= 10;
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => addPredefinedTag(tag)}
+                    disabled={isAlreadyAdded || isMaxReached}
+                    style={{
+                      padding: "4px 8px",
+                      fontSize: "12px",
+                      borderRadius: "12px",
+                      border: "1px solid #ddd",
+                      backgroundColor: isAlreadyAdded ? "#e0e0e0" : "#f5f5f5",
+                      color: isAlreadyAdded ? "#999" : "#333",
+                      cursor: isAlreadyAdded || isMaxReached ? "not-allowed" : "pointer",
+                      opacity: isAlreadyAdded || isMaxReached ? 0.5 : 1
+                    }}
+                  >
+                    {isAlreadyAdded ? "✓ " : ""}{tag}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* <div style={{ marginBottom: "10px" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "10px" }}>
+              {formData.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  style={{
+                    backgroundColor: "#e3f2fd",
+                    color: "#1976d2",
+                    padding: "4px 8px",
+                    borderRadius: "16px",
+                    fontSize: "14px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px"
+                  }}
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#1976d2",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      padding: "0",
+                      marginLeft: "4px"
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyPress={handleTagKeyPress}
+                placeholder="カスタムタグを入力してEnterまたは追加ボタンを押してください"
+                style={{
+                  flex: 1,
+                  padding: "8px",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  fontSize: "16px"
+                }}
+                maxLength={20}
+              />
+              <button
+                type="button"
+                onClick={addTag}
+                disabled={!newTag.trim() || formData.tags.includes(newTag.trim()) || formData.tags.length >= 10}
+                style={{
+                  padding: "8px 16px",
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "14px"
+                }}
+              >
+                追加
+              </button>
+            </div>
+            <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0 0" }}>
+              {formData.tags.length}/10 個のタグが追加されています
+            </p>
+          </div> */}
         </div>
 
         <button type="submit" disabled={isSubmitting || !formData.name.trim() || !formData.price || !formData.description.trim()}>

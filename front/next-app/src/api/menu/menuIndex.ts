@@ -10,6 +10,7 @@ export type MenuIndexRequest = {
   image_url: string;
   price: number;
   category?: string;
+  tags?: string[];
   is_available: boolean;
   created_at: string;
   updated_at?: string;
@@ -30,8 +31,8 @@ export type MenuIndexResponse =
     messages: Array<string>;
   };
 
-export async function MenuIndex() {
-  const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/menus`;
+export async function MenuIndex(page: number = 1, perPage: number = 10) {
+  const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/menus/?page=${page}&per_page=${perPage}`;
   const authToken = Cookies.get("authToken");
 
   return axios

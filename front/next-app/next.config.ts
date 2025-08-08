@@ -45,6 +45,8 @@ const nextConfig: NextConfig = {
         pathname: '/static/**',
       },
     ],
+    // 画像の最適化を無効にする場合
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 };
 

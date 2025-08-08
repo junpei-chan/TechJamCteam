@@ -8,6 +8,8 @@ export type MenuStoreRequest = {
   description: string;
   image_url: string;
   price: number;
+  category?: string;
+  tags?: string[];
 }
 
 export type MenuStoreResponse = 
@@ -21,6 +23,8 @@ export type MenuStoreResponse =
       description: string;
       image_url: string;
       price: number;
+      category?: string;
+      tags?: string[];
       is_available: boolean;
       created_at: string;
       updated_at?: string;
@@ -46,6 +50,8 @@ export async function menuStore(request: MenuStoreRequest) {
       description: string;
       image_url: string;
       price: number;
+      category?: string;
+      tags?: string[];
       is_available: boolean;
       created_at: string;
       updated_at?: string;

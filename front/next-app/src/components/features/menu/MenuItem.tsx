@@ -30,7 +30,7 @@ export function MenuItem({
       />
       <div>
         <p>{name}</p>
-        <p>¥ {price}</p>
+        <p>¥{price}</p>
       </div>
     </div>
   )

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { MenuIndex, MenuIndexRequest, MenuIndexResponse } from '@/api/menu/menuIndex';
 import { MenuItem } from './MenuItem';
-import { menuDelete } from '@/api/menu/menuDelete';
 import { useRouter } from 'next/navigation';
 
 export function MenuList() {
@@ -11,18 +10,20 @@ export function MenuList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
-  const [deletingMenuId, setDeletingMenuId] = useState<number | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [menuToDelete, setMenuToDelete] = useState<MenuIndexRequest | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [perPage, setPerPage] = useState(10);
   const router = useRouter();
 
   useEffect(() => {
     const fetchMenus = async () => {
+      setLoading(true);
       try {
-        const response: MenuIndexResponse = await MenuIndex();
+        const response: MenuIndexResponse = await MenuIndex(currentPage, perPage);
         
         if (response.success) {
           setMenus(response.items);
+          setTotalItems(response.total);
         } else {
           setError(response.messages.join(', '));
         }
@@ -34,11 +35,7 @@ export function MenuList() {
     };
 
     fetchMenus();
-  }, []);
-
-  const handleImageError = (menuId: number) => {
-    setImageErrors(prev => new Set(prev.add(menuId)));
-  };
+  }, [currentPage, perPage]);
 
   const getImageSrc = (menu: MenuIndexRequest) => {
     if (imageErrors.has(menu.id)) {
@@ -57,40 +54,79 @@ export function MenuList() {
     return menu.image_url || '/menu-default.jpg';
   };
 
-  const handleDeleteClick = (menu: MenuIndexRequest) => {
-    setMenuToDelete(menu);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!menuToDelete) return;
-
-    setDeletingMenuId(menuToDelete.id);
-    try {
-      const response = await menuDelete(menuToDelete.id);
-      
-      if (response.success) {
-        // メニューリストから削除されたメニューを除外
-        setMenus(prevMenus => prevMenus.filter(menu => menu.id !== menuToDelete.id));
-        setShowDeleteModal(false);
-        setMenuToDelete(null);
-      } else {
-        setError(response.messages.join(', '));
-      }
-    } catch (err) {
-      setError('メニューの削除に失敗しました');
-    } finally {
-      setDeletingMenuId(null);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
-    setMenuToDelete(null);
-  };
-
   const handleMenuClick = (menuId: number) => {
     router.push(`/menu/${menuId}`);
+  };
+
+  const totalPages = Math.ceil(totalItems / perPage);
+  
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // 前へボタン
+    if (currentPage > 1) {
+      pages.push(
+        <button
+          key="prev"
+          onClick={() => handlePageChange(currentPage - 1)}
+          className="px-3 py-2 mx-1 bg-accent text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          前へ
+        </button>
+      );
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-2 mx-1 rounded transition-colors ${
+            i === currentPage
+              ? 'bg-accent text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    if (currentPage < totalPages) {
+      pages.push(
+        <button
+          key="next"
+          onClick={() => handlePageChange(currentPage + 1)}
+          className="px-3 py-2 mx-1 bg-accent text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          次へ
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex justify-center items-center mt-8 mb-4">
+        <div className="flex items-center">
+          {pages}
+        </div>
+        <div className="ml-4 text-sm text-gray-600">
+          {totalItems}件中 {(currentPage - 1) * perPage + 1}-{Math.min(currentPage * perPage, totalItems)}件表示
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -121,14 +157,22 @@ export function MenuList() {
     <div className="container mx-auto px-4 py-4 mt-[182px] mb-18">      
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {menus.map((menu) => (
-          <MenuItem 
-            key={menu.id}
-            image_url={menu.image_url || '/menu-default.jpg'}
-            name={menu.name}
-            price={menu.price}
-          />
+          <div key={menu.id} className="relative">
+            <div 
+              onClick={() => handleMenuClick(menu.id)}
+              className="cursor-pointer transition-transform hover:scale-105"
+            >
+              <MenuItem 
+                image_url={getImageSrc(menu)}
+                name={menu.name}
+                price={menu.price}
+              />
+            </div>
+          </div>
         ))}
       </div>
+      
+      {renderPagination()}
     </div>
   );
 }
