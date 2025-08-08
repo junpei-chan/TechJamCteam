@@ -18,7 +18,7 @@ export function SearchBar() {
         </li>
       </ul>
 
-      <div className="flex items-center border border-light-black w-[350px] h-[40px] rounded-lg px-[10px] gap-4">
+      <div className="flex items-center border border-light-black w-[350px] h-[40px] rounded-lg px-[10px] gap-4 bg-white">
         <Image 
           src="/icons/search-icon.svg"
           alt="search-icon"

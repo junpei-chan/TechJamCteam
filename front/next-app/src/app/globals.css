@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --main-color: #F7B225;
@@ -14,19 +16,4 @@
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-@theme {
-  --color-main: var(--main-color);
-  --color-accent: var(--accent-color);
-  --color-base: var(--base-color);
-  --color-black-30: var(--light-black-color) opacity(0.3);
-  --color-black-60: var(--light-black-color) opacity(0.6);
-
-  --text-large: 20px;
-  --text-normal: 16px;
-  --text-small: 14px;
-  
-  --shadow-top: 0px -2px 5px -2px rgba(0,0,0,0.5);
-  --shadow-bottom: 0px 2px 5px -2px rgba(0,0,0,0.5);
 }

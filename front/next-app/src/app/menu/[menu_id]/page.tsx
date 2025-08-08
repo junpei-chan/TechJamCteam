@@ -6,6 +6,7 @@ import { MenuDetail, MenuDetailRequest } from "@/api/menu/menuDetail";
 import { ShopDetail, ShopDetailRequest } from "@/api/shop/shopDetail";
 import { MenuByShop } from "@/api/menu/menuByShop";
 import { MenuIndexRequest } from "@/api/menu/menuIndex";
+import { addMenuFavorite, removeMenuFavorite, checkMenuFavorite } from "@/api/favorites/menuFavorites";
 import { Header } from "@/components/shared";
 import { ConditionalFooter } from "@/components/shared";
 import { formatPrice } from "@/utils/formatPrice";
@@ -22,6 +23,12 @@ export default function MenuDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+
+  // TODO: 実際のユーザーIDを取得する仕組みを実装
+  // 現在はテスト用に1を使用
+  const userId = 1;
 
   const getImageSrc = (imageUrl: string) => {
     if (imageError) {
@@ -75,6 +82,34 @@ export default function MenuDetailPage() {
     router.push(`/menu/${menuId}`);
   };
 
+  const handleFavoriteClick = async () => {
+    if (favoriteLoading || !menu) return;
+
+    setFavoriteLoading(true);
+    try {
+      if (isFavorite) {
+        // お気に入りから削除
+        const response = await removeMenuFavorite(userId, parseInt(menuId));
+        if (response.success) {
+          setIsFavorite(false);
+        }
+      } else {
+        // お気に入りに追加
+        const response = await addMenuFavorite({
+          user_id: userId,
+          menu_id: parseInt(menuId)
+        });
+        if (response.success) {
+          setIsFavorite(true);
+        }
+      }
+    } catch (error) {
+      console.error("お気に入り操作に失敗しました:", error);
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchMenu = async () => {
       setLoading(true);
@@ -85,14 +120,18 @@ export default function MenuDetailPage() {
       if (response.success) {
         setMenu(response.menu);
         
-        // メニュー取得後、店舗情報も取得
+        // お気に入り状態をチェック
+        const favoriteCheck = await checkMenuFavorite(userId, parseInt(menuId));
+        if (favoriteCheck.success) {
+          setIsFavorite(favoriteCheck.isFavorite);
+        }
+        
         if (response.menu.shop_id) {
           const shopResponse = await ShopDetail(response.menu.shop_id.toString());
           if (shopResponse.success) {
             setShop(shopResponse.shop);
           }
           
-          // 店舗の他のメニューも取得（現在のメニューを除外）
           const shopMenusResponse = await MenuByShop(response.menu.shop_id, 4, response.menu.id);
           if (shopMenusResponse.success) {
             console.log('Shop menus response:', shopMenusResponse.items);
@@ -154,12 +193,21 @@ export default function MenuDetailPage() {
               </div>
 
               <div className="flex gap-5 justify-end">
-                <button>
+                <button 
+                  onClick={handleFavoriteClick}
+                  disabled={favoriteLoading}
+                  className={`transition-colors ${favoriteLoading ? 'opacity-50' : ''}`}
+                >
                   <Image
-                    src="/icons/favorite-icon.svg"
+                    src={
+                      isFavorite ? "/icons/favorite-icon-selected.svg" : "/icons/favorite-icon.svg"
+                    }
                     alt="お気に入り"
                     width={20}
                     height={20}
+                    style={{
+                      filter: isFavorite ? 'invert(31%) sepia(63%) saturate(2070%) hue-rotate(345deg) brightness(101%) contrast(95%)' : 'none'
+                    }}
                   />
                 </button>
                 <button>
@@ -199,7 +247,7 @@ export default function MenuDetailPage() {
 
           {menu.shop_id && shop && (
             <div className="px-6 py-4 mb-18">
-              <h3 className="inline-block text-normal text-accent mb-3 border-b-1 px-1">
+              <h3 className="inline-block text-normal text-accent mb-3 border-b border-accent px-1">
                 <Link href={`/shop/${menu.shop_id}`}>
                   {shop.name}
                 </Link>
@@ -237,7 +285,6 @@ export default function MenuDetailPage() {
                     ))}
                   </div>
                   
-                  {/* スクロールヒント */}
                   {shopMenus.length > 2 && (
                     <div className="flex justify-center mt-2">
                       <div className="text-xs text-gray-400">← スワイプして他のメニューを見る →</div>

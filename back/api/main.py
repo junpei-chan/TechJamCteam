@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
-from .routers import menu, users, shop, area, menu_favorites, favorites, auth, upload  # , genre  # 一時的にコメントアウト
+from .routers import menu, menu_single, users, shop, area, menu_favorites, favorites, auth, upload  # , genre  # 一時的にコメントアウト
 from .models import users as user_models
 from .models import area as area_models
 from .models import menu as menu_models
@@ -72,6 +72,7 @@ async def startup_event():
   create_tables()
 
 app.include_router(menu.router)
+app.include_router(menu_single.router)
 app.include_router(users.router)
 app.include_router(shop.router)
 app.include_router(area.router)

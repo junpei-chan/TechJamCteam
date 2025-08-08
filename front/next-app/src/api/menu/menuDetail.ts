@@ -28,10 +28,13 @@ export type MenuDetailResponse =
 
 export async function MenuDetail(menuId: string) {
   const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/menus/${menuId}`;
+  console.log("Requesting menu detail from:", apiUrl);
+  console.log("Backend URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
 
   return axios
     .get<MenuDetailRequest>(apiUrl)
     .then((response) => {
+      console.log("Menu detail response:", response.data);
       return {
         success: true,
         menu: response.data,
@@ -40,6 +43,8 @@ export async function MenuDetail(menuId: string) {
     })
     .catch((error) => {
       console.error("Menu detail fetch error:", error);
+      console.error("Error response:", error.response);
+      console.error("Error message:", error.message);
       return {
         success: false,
         messages: error.response?.data?.detail || ["Failed to fetch menu"],
