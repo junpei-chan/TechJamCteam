@@ -15,6 +15,7 @@ def get_menus(
   per_page: int = Query(10, ge=1, le=100),
   category: Optional[str] = None,
   search: Optional[str] = None,
+  shop_id: Optional[int] = None,
   available_only: bool = True,
   db: Session = Depends(get_db)
 ):
@@ -27,11 +28,13 @@ def get_menus(
     limit=per_page, 
     category=category, 
     search=search,
+    shop_id=shop_id,
     available_only=available_only
   )
   total = crud.get_menus_count(
     category=category, 
     search=search,
+    shop_id=shop_id,
     available_only=available_only
   )
   

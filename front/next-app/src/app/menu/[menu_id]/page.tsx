@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { MenuDetail } from "@/api/menu/menuDetail";
-import { MenuDetailRequest } from "@/api/menu/menuDetail";
+import { MenuDetail, MenuDetailRequest } from "@/api/menu/menuDetail";
+import { ShopDetail, ShopDetailRequest } from "@/api/shop/shopDetail";
+import { MenuByShop, MenuByShopResponse } from "@/api/menu/menuByShop";
+import { MenuIndexRequest } from "@/api/menu/menuIndex";
 import { Header } from "@/components/shared";
+import { GeneralFooter } from "@/components/shared";
 import Image from "next/image";
 
 export default function MenuDetailPage() {
@@ -12,6 +15,8 @@ export default function MenuDetailPage() {
   const router = useRouter();
   const menuId = params.menu_id as string;
   const [menu, setMenu] = useState<MenuDetailRequest | null>(null);
+  const [shop, setShop] = useState<ShopDetailRequest | null>(null);
+  const [shopMenus, setShopMenus] = useState<MenuIndexRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
@@ -20,17 +25,43 @@ export default function MenuDetailPage() {
     if (imageError) {
       return '/menu-default.jpg';
     }
-    // blob URLやローカルURLの場合はデフォルト画像を使用
     if (imageUrl && (imageUrl.startsWith('blob:') || imageUrl.startsWith('file:'))) {
       return '/menu-default.jpg';
     }
-    // バックエンドの静的画像URLの場合、完全なURLを構築
     if (imageUrl && imageUrl.startsWith('/static/')) {
       const fullUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`;
-      console.log('Generated image URL:', fullUrl); // デバッグ用
+      console.log('Generated image URL:', fullUrl);
       return fullUrl;
     }
-    console.log('Using original image URL:', imageUrl); // デバッグ用
+    console.log('Using original image URL:', imageUrl);
+    return imageUrl || '/menu-default.jpg';
+  };
+
+  const getMenuImageSrc = (imageUrl: string) => {
+    console.log('Processing menu image URL:', imageUrl);
+    
+    if (!imageUrl) {
+      console.log('No image URL provided, using default');
+      return '/menu-default.jpg';
+    }
+    
+    if (imageUrl && (imageUrl.startsWith('blob:') || imageUrl.startsWith('file:'))) {
+      console.log('Blob or file URL detected, using default');
+      return '/menu-default.jpg';
+    }
+    
+    if (imageUrl && imageUrl.startsWith('/static/')) {
+      const fullUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`;
+      console.log('Static URL detected, full URL:', fullUrl);
+      return fullUrl;
+    }
+    
+    if (imageUrl && imageUrl.startsWith('http')) {
+      console.log('HTTP URL detected:', imageUrl);
+      return imageUrl;
+    }
+    
+    console.log('Using original image URL:', imageUrl);
     return imageUrl || '/menu-default.jpg';
   };
 
@@ -44,6 +75,10 @@ export default function MenuDetailPage() {
     }
   };
 
+  const handleMenuClick = (menuId: number) => {
+    router.push(`/menu/${menuId}`);
+  };
+
   useEffect(() => {
     const fetchMenu = async () => {
       setLoading(true);
@@ -53,6 +88,21 @@ export default function MenuDetailPage() {
 
       if (response.success) {
         setMenu(response.menu);
+        
+        // メニュー取得後、店舗情報も取得
+        if (response.menu.shop_id) {
+          const shopResponse = await ShopDetail(response.menu.shop_id.toString());
+          if (shopResponse.success) {
+            setShop(shopResponse.shop);
+          }
+          
+          // 店舗の他のメニューも取得（現在のメニューを除外）
+          const shopMenusResponse = await MenuByShop(response.menu.shop_id, 4, response.menu.id);
+          if (shopMenusResponse.success) {
+            console.log('Shop menus response:', shopMenusResponse.items);
+            setShopMenus(shopMenusResponse.items);
+          }
+        }
       } else {
         setError(response.messages.join(", "));
       }
@@ -132,25 +182,16 @@ export default function MenuDetailPage() {
                 </p>
               )}
               
-              {menu.shop_id && (
-                <div>
-                  {/* 店舗詳細を見る */}
-                </div>
-              )}
-              
               {menu.tags && menu.tags.length > 0 ? (
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-2">タグ</p>
-                  <div className="flex flex-wrap gap-2">
-                    {menu.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
+                <div className="flex flex-wrap gap-2 justify-end">
+                  {menu.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-accent text-white px-2 py-1 rounded-full text-sm font-medium"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               ) : (
                 <div>
@@ -159,12 +200,63 @@ export default function MenuDetailPage() {
               )}
             </div>
           </div>
+
+          {menu.shop_id && shop && (
+            <div className="px-6 py-4 mb-18">
+              <h3 className="text-normal mb-3">{shop.name}</h3>
+              <p className="text-small">[他のおすすめのメニュー]</p>
+              {shopMenus.length > 0 ? (
+                <div className="mt-4 pb-2">
+                  <div 
+                    className="flex gap-4 overflow-x-auto pb-2"
+                    style={{ 
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: '#CBD5E0 #F7FAFC',
+                      WebkitOverflowScrolling: 'touch'
+                    }}
+                  >
+                    {shopMenus.map((shopMenu) => (
+                      <div
+                        key={shopMenu.id}
+                        onClick={() => handleMenuClick(shopMenu.id)}
+                        className="cursor-pointer flex-shrink-0 rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
+                      >
+                        <Image
+                          src={getMenuImageSrc(shopMenu.image_url)}
+                          alt={shopMenu.name}
+                          width={160}
+                          height={120}
+                          className="object-cover w-[160px] h-[120px] rounded-lg"
+                          unoptimized
+                          onError={(e) => {
+                            console.log('Menu image error for:', shopMenu.name, shopMenu.image_url);
+                            e.currentTarget.src = '/menu-default.jpg';
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* スクロールヒント */}
+                  {shopMenus.length > 2 && (
+                    <div className="flex justify-center mt-2">
+                      <div className="text-xs text-gray-400">← スワイプして他のメニューを見る →</div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">他のメニューはありません</p>
+              )}
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex justify-center items-center p-8">
           <div className="text-gray-500">メニューが見つかりませんでした</div>
         </div>
       )}
+
+      <GeneralFooter />
     </div>
   )
 }

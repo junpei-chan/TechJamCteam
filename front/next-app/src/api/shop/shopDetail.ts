@@ -4,7 +4,7 @@ export type ShopDetailRequest = {
   id: number;
   area_id: number;
   name: string;
-  shop_detail: string; // バックエンドのフィールド名に合わせて修正
+  shop_detail: string;
   image_path: string | null;
   homepage_url: string | null;
   address: string;
