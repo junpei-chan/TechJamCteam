@@ -17,7 +17,7 @@ def create_notification_shop(
   return crud.create(data)
 
 @router.get("/", response_model=List[NotificationShopRead])
-def list_notificatino_shops(
+def list_notification_shops(
   skip: int = 0,
   limit: int = 100,
   db: Session = Depends(get_db)
