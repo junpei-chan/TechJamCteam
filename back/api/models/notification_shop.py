@@ -7,8 +7,8 @@ class NotificationShop(Base):
   __tablename__ = "notification__shop"
 
   id = Column(Integer, primary_key=True, index=True)
-  notifications_id = Column(Integer, ForeignKey("notification.id", ondelete="CASCADE"), nullable=False)
-  shop_id = Column(Integer, ForeignKey("shop.id", ondelete="CASCADE"), nullable=False)
+  notifications_id = Column(Integer, ForeignKey("notification.notification_id", ondelete="CASCADE"), nullable=False)
+  shop_id = Column(Integer, ForeignKey("shop.shop_id", ondelete="CASCADE"), nullable=False)
 
   created_at = Column(DateTime(timezone=True), server_default=func.now())
 

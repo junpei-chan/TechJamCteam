@@ -7,10 +7,10 @@ class NotificationShopCRUD:
     self.db = db
 
   # 新規作成
-  def create(self, notificatinon_shop: NotificationShopCreate):
+  def create(self, notification_shop: NotificationShopCreate):
     db_notification_shop = NotificationShop(
-      notification_id = notificatinon_shop.notification_id,
-      shop_id = notificatinon_shop.shop_id
+      notification_id = notification_shop.notification_id,
+      shop_id = notification_shop.shop_id
     )
     self.db.add(db_notification_shop)
     self.db.commit()

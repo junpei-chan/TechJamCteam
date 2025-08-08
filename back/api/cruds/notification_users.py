@@ -19,7 +19,7 @@ class NotificationUsersCRUD:
   
   # 全件取得
   def get_all(self, skip: int = 0, limit: int = 100):
-    return self.db.query(NotificationUsers).ofset(skip).limit(limit).all()
+    return self.db.query(NotificationUsers).offset(skip).limit(limit).all()
   
   # ID指定で取得
   def get_by_id(self, notification_user_id: int):
