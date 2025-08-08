@@ -9,7 +9,9 @@ from .models import (
   shop as shop_models,
   menu_favorites as menu_favorites_models,
   shop_users as shop_user_models,
-  notification as notification_models
+  notification as notification_models,
+  notification_users as notification_users_models,
+  notification_shop as notification_shop_models,
 )
 import time
 import logging
