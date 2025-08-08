@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { MenuList } from "@/components/features/top/MenuList";
-import { Logo, SearchBar } from "@/components/shared/";
+import { Logo, SearchBar, GeneralFooter } from "@/components/shared/";
 import { useAuth, useLogout } from "../hooks/useAuth";
 
 export default function Top() {
@@ -42,10 +42,11 @@ export default function Top() {
         </div>
 
         <SearchBar />
-
       </header>
 
       <MenuList />
+
+      <GeneralFooter />
     </main>
   );
 }

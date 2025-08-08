@@ -25,4 +25,7 @@
   --text-large: 20px;
   --text-normal: 16px;
   --text-small: 14px;
+  
+  --shadow-top: 0px -2px 5px -2px rgba(0,0,0,0.5);
+  --shadow-bottom: 0px 2px 5px -2px rgba(0,0,0,0.5);
 }
