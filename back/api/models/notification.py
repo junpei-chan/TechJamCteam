@@ -18,5 +18,19 @@ class Notification(Base):
   shop = relationship("Shop")
   shop_user = relationship("ShopUsers")
 
+  # Notification → NotificationUsers の一対多リレーション
+  notification_users = relationship(
+    "NotificationUsers",
+    back_populates="notification",
+    cascade="all, dalete-orphan"  # Notification を削除すると関連する中間行も削除
+  )
+
+  # Notification → NotificationShop の一対多リレーション
+  notification_shops = relationship(
+    "NotificationShop",
+    back_populates="notification",
+    cascade="all, delete-orphan"  # Notification を削除すると関連する中間行も削除
+  )
+
   def __repr__(self):
     return f"<Notification(to_user={self.user_id}, contents={self.content})>"
