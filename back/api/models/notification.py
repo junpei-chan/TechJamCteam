@@ -7,9 +7,9 @@ class Notification(Base):
   __tablename__ = "notifications"
 
   id = Column(Integer, primary_key=True, index=True)
-  user_id = Column(Integer, ForeignKey("users.users.id"), nullable=False)                          # 通知の送り先
-  shop_id = Column(Integer, ForeignKey("shop.shop.id"), nullable=True)           # 関連する店舗
-  shop_user_id = Column(Integer, ForeignKey("shopusers.shop_user.id"), nullable=True) # 店舗側ユーザー（オプション）
+  user_id = Column(Integer, ForeignKey("users.users_id"), nullable=False)                          # 通知の送り先
+  shop_id = Column(Integer, ForeignKey("shop.shop_id"), nullable=True)           # 関連する店舗
+  shop_user_id = Column(Integer, ForeignKey("shopusers.shop_user_id"), nullable=True) # 店舗側ユーザー（オプション）
   contents = Column(String, nullable=False)                                  # 通知内容
   created_at = Column(DateTime(timezone=True), server_default=func.now())
   status = Column(String, default="unread")                                                    # 既読・未読
