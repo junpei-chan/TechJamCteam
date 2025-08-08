@@ -188,7 +188,9 @@ export default function MenuDetailPage() {
             
             <div className="w-full flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <h1 className="text-large font-bold">{menu.name}</h1>
+                <h1 className="text-large font-bold text-black">
+                  {menu.name}
+                </h1>
                 <p className="text-normal font-semibold">¥{formatPrice(menu.price)}</p>
               </div>
 

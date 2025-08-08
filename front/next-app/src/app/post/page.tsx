@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { menuStore, MenuStoreRequest } from "@/api/menu/menuStore"
@@ -184,6 +185,11 @@ export default function Post() {
         });
         setSelectedFile(null);
         setNewTag("");
+        
+        // 投稿完了後、少し待ってからトップページへ遷移
+        setTimeout(() => {
+          router.push('/');
+        }, 1500);
       } else {
         setMessage(`エラー: ${response.messages.join(", ")}`);
       }
@@ -206,7 +212,20 @@ export default function Post() {
 
   return (
     <main>
-      <form onSubmit={handleSubmit}>
+      <header className="flex items-center justify-between px-4 pt-4 h-[92px] bg-base shadow-md">
+        <Link href="/profile" className="flex items-center justify-center w-10">
+          <Image
+            src="/icons/close-icon.svg"
+            alt="close-icon"
+            width={20}
+            height={20}
+          />
+        </Link>
+        <h1 className="text-normal font-medium text-center flex-1"></h1>
+        <div className="w-10 h-10"></div>
+      </header>
+      
+      <form onSubmit={handleSubmit} className="flex flex-col items-center px-8 mt-2">
         {message && (
           <div style={{ 
             padding: "10px", 
@@ -220,37 +239,48 @@ export default function Post() {
         )}
 
         <ul>
-          {selectedFile && (
-            <li>
-              {formData.image_url.startsWith('blob:') ? (
+          <li>
+            {selectedFile ? (
+              formData.image_url.startsWith('blob:') ? (
                 <img
                   src={formData.image_url}
                   alt="preview"
-                  width={100}
-                  height={100}
+                  width={300}
+                  height={300}
                   style={{ objectFit: 'cover' }}
+                  className="w-[300px] h-[300px] object-cover rounded-lg"
                 />
               ) : (
                 <Image
                   src={formData.image_url}
                   alt="preview"
-                  width={100}
-                  height={100}
+                  width={300}
+                  height={300}
                   style={{ objectFit: 'cover' }}
+                  className="w-[300px] h-[300px] object-cover rounded-lg"
                 />
-              )}
-            </li>
-          )}
+              )
+            ) : (
+              <div className="flex justify-center items-center bg-white w-[300px] h-[300px]">
+                <Image 
+                  src="/icons/camera-icon.svg"
+                  alt="camera-icon"
+                  width={40}
+                  height={40}
+                />
+              </div>
+            )}
+          </li>
         </ul>
 
-        <div>
+        <div className="flex items-center gap-5 mt-4">
           <Image 
             src="/icons/photo-icon.svg"
             alt="photo-icon"
             width={24}
             height={24}
           />
-          <label htmlFor="image">
+          <label htmlFor="image" className="text-normal text-[#43B0FF] font-black ">
             <input 
               type="file" 
               id="image" 
@@ -263,46 +293,51 @@ export default function Post() {
           </label>
         </div>
 
-        <div>
-          <label htmlFor="name">名前</label>
-          <input 
-            type="text" 
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
+        <div className="flex flex-col items-center gap-2 w-[315px] mt-6">
+          <div>
+            <label htmlFor="name" className="inline-block text-large w-28">メニュー名</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              onChange={handleInputChange}
+              className="bg-base border-b border-[#A2A2A2] py-2 outline-none"
+              placeholder="メニュー名を入力"
+              autoComplete="off"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="price" className="inline-block text-large w-28">価格</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              onChange={handleInputChange}
+              className="bg-base border-b border-[#A2A2A2] py-2 outline-none"
+              placeholder="価格を入力"
+              autoComplete="off"
+              required
+              min="0"
+            />
+          </div>
+          <div className="flex">
+            <label htmlFor="description" className="inline-block text-large w-28">説明</label>
+            <textarea
+              name="description"
+              id="description"
+              onChange={handleInputChange}
+              className="bg-base border-b border-[#A2A2A2] py-2 outline-none"
+              placeholder="詳細を入力"
+              autoComplete="off"
+              required
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="price">価格</label>
-          <input 
-            type="number" 
-            id="price"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-            required
-            min="0"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="description">説明</label>
-          <textarea 
-            name="description" 
-            id="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-
-        <div>
+        <div className="mt-8">
           <label htmlFor="tags">タグ (最大10個)</label>
           
-          {/* 事前定義されたタグ */}
           <div style={{ marginBottom: "15px" }}>
             <p style={{ fontSize: "14px", color: "#666", marginBottom: "8px" }}>
               よく使われるタグ（クリックで追加）：
@@ -409,9 +444,15 @@ export default function Post() {
           </div> */}
         </div>
 
-        <button type="submit" disabled={isSubmitting || !formData.name.trim() || !formData.price || !formData.description.trim()}>
-          {isSubmitting ? "投稿中..." : "投稿"}
-        </button>
+        <div className="mb-36 mt-8">
+          <button 
+            className="w-[300px] bg-accent text-white py-3 rounded-full"
+            type="submit"
+            disabled={isSubmitting || !formData.name.trim() || !formData.price || !formData.description.trim()}
+          >
+            {isSubmitting ? "投稿中..." : "投稿"}
+          </button>
+        </div>
       </form>
 
       <ConditionalFooter />
