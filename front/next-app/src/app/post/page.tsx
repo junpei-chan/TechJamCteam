@@ -73,7 +73,7 @@ export default function Post() {
     setMessage("");
 
     try {
-      let imageUrl = "/menu-default.png";
+      let imageUrl = "/menu-default.jpg";
       
       // ファイルが選択されている場合、実際のアップロード処理を行う
       if (selectedFile) {

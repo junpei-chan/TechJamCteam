@@ -17,17 +17,17 @@ export default function MenuDetailPage() {
 
   const getImageSrc = (imageUrl: string) => {
     if (imageError) {
-      return '/menu-default.png';
+      return '/menu-default.jpg';
     }
     // blob URLやローカルURLの場合はデフォルト画像を使用
     if (imageUrl && (imageUrl.startsWith('blob:') || imageUrl.startsWith('file:'))) {
-      return '/menu-default.png';
+      return '/menu-default.jpg';
     }
     // バックエンドの静的画像URLの場合、完全なURLを構築
     if (imageUrl && imageUrl.startsWith('/static/')) {
       return `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`;
     }
-    return imageUrl || '/menu-default.png';
+    return imageUrl || '/menu-default.jpg';
   };
 
   const handleShopClick = () => {

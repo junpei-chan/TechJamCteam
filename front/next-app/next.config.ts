@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
         port: '8006',
         pathname: '/static/**',
       },
+      {
+        protocol: 'http',
+        hostname: '10.79.10.139',
+        port: '8006',
+        pathname: '/static/**',
+      },
       // 開発環境での任意のlocalhostポートを許可
       {
         protocol: 'http',

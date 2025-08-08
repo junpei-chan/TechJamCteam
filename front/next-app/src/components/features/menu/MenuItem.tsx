@@ -1,23 +1,36 @@
 import Image from "next/image"
+import { useState } from "react"
 
 type MenuItemProps = {
   image_url: string;
   name: string;
-  price: string;
+  price: number;
 }
 
-export function MenuItem({ menu }: { menu: MenuItemProps }) {
+export function MenuItem({
+  image_url,
+  name,
+  price
+}: MenuItemProps) {
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
-    <div>
+    <div className="flex flex-col items-center text-center">
       <Image 
-        src={menu.image_url}
-        alt={menu.name}
+        src={imageError ? '/menu-default.jpg' : image_url}
+        alt={`${name}`}
         width={160}
         height={100}
+        onError={handleImageError}
+        className="w-[160px] h-[100px] object-cover rounded-lg"
       />
       <div>
-        <p>{menu.name}</p>
-        <p>{menu.price}</p>
+        <p>{name}</p>
+        <p>¥ {price}</p>
       </div>
     </div>
   )

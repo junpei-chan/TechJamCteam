@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { MenuIndex, MenuIndexRequest, MenuIndexResponse } from '@/api/menu/menuIndex';
+import { MenuItem } from './MenuItem';
 import { menuDelete } from '@/api/menu/menuDelete';
 import { useRouter } from 'next/navigation';
 
@@ -41,11 +42,11 @@ export function MenuList() {
 
   const getImageSrc = (menu: MenuIndexRequest) => {
     if (imageErrors.has(menu.id)) {
-      return '/menu-default.png';
+      return '/menu-default.jpg';
     }
     // blob URLやローカルURLの場合はデフォルト画像を使用
     if (menu.image_url && (menu.image_url.startsWith('blob:') || menu.image_url.startsWith('file:'))) {
-      return '/menu-default.png';
+      return '/menu-default.jpg';
     }
     
     // バックエンドの静的画像URLの場合、完全なURLを構築
@@ -53,7 +54,7 @@ export function MenuList() {
       return `${process.env.NEXT_PUBLIC_BACKEND_URL}${menu.image_url}`;
     }
     
-    return menu.image_url || '/menu-default.png';
+    return menu.image_url || '/menu-default.jpg';
   };
 
   const handleDeleteClick = (menu: MenuIndexRequest) => {
@@ -118,8 +119,15 @@ export function MenuList() {
 
   return (
     <div className="container mx-auto px-4 py-4 mt-[182px] mb-18">      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {menus.map((menu) => (
+          <MenuItem 
+            key={menu.id}
+            image_url={menu.image_url || '/menu-default.jpg'}
+            name={menu.name}
+            price={menu.price}
+          />
+        ))}
       </div>
     </div>
   );

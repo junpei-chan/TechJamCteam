@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { MenuList } from "@/components/features/top/MenuList";
+import { MenuList } from "@/components/features/menu/MenuList";
 import { Logo, SearchBar, GeneralFooter } from "@/components/shared/";
 import { useAuth, useLogout } from "../hooks/useAuth";
 
