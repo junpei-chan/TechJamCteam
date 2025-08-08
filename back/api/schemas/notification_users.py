@@ -10,7 +10,7 @@ class NotificationUsersCreate(NotificationUsersBase):
 
 class NotificationUsersRead(NotificationUsersBase):
   id: int
-  create_at: datetime
+  created_at: datetime
 
   class Config:
     orm_mode = True
