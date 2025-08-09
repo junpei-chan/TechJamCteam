@@ -1,22 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
-from .routers import (
-  menu, users, shop, area, genre,
-  menu_favorites, favorites, auth,
-  notification, notification_users, notification_shop,
-)
-from .models import (
-  users as user_models,
-  area as area_models,
-  menu as menu_models,
-  shop as shop_models,
-  menu_favorites as menu_favorites_models,
-  shop_users as shop_user_models,
-  notification as notification_models,
-  notification_users as notification_users_models,
-  notification_shop as notification_shop_models,
-)
+from .routers import menu, menu_single, users, shop, area, menu_favorites, favorites, auth, upload  # , genre  # 一時的にコメントアウト
+from .models import users as user_models
+from .models import area as area_models
+from .models import menu as menu_models
+from .models import menu as menu_models
+from .models import shop as shop_models
+from .models import menu_favorites as menu_favorites_models
+from .models import shop_users as shop_user_models
 import time
 import logging
 from sqlalchemy import text
@@ -44,13 +37,33 @@ def create_tables():
 
 app = FastAPI(title="Menu API", version="1.0.0")
 
-# CORS設定
+# 静的ファイルの配信設定
+from pathlib import Path
+static_path = Path(__file__).parent.parent / "static"
+static_path.mkdir(exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+
+# CORS設定を強化
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3006", "http://localhost:3000"],  # フロントエンドのURL
+    allow_origins=[
+        "http://localhost:3006", 
+        "http://localhost:3000",
+        "http://127.0.0.1:3006",
+        "http://127.0.0.1:3000",
+        "http://10.79.10.139:3006",  # 外部アクセス用
+        "http://10.79.10.139:3000"   # 外部アクセス用
+    ],  # フロントエンドのURL
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=[
+        "Accept",
+        "Accept-Language",
+        "Content-Language",
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With"
+    ],
 )
 
 @app.on_event("startup")
@@ -59,16 +72,15 @@ async def startup_event():
   create_tables()
 
 app.include_router(menu.router)
+app.include_router(menu_single.router)
 app.include_router(users.router)
 app.include_router(shop.router)
 app.include_router(area.router)
-app.include_router(genre.router)
+# app.include_router(genre.router)  # 一時的にコメントアウト
 app.include_router(menu_favorites.router)
 app.include_router(favorites.router)
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
-app.include_router(notification.router)
-app.include_router(notification_users.router)
-app.include_router(notification_shop.router)
+app.include_router(upload.router)
 
 @app.get("/health")
 def health_check():

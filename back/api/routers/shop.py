@@ -7,7 +7,7 @@ from ..database import get_db
 router = APIRouter(prefix="/shops", tags=["shops"])
 
 # 新しいショップを作成し、作成された内容を返す
-@router.post("/", response_model=ShopBase)
+@router.post("/", response_model=ShopRead)
 def create_shop(shop: ShopCreate, db: Session = Depends(get_db)):
   return cruds.create_shop(db, shop)
 

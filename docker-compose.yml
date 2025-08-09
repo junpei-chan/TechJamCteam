@@ -5,6 +5,8 @@ services:
       - ./front:/front
     ports:
       - 3006:3000
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:8006
   api:
     build: ./back/
     volumes:

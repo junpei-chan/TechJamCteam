@@ -18,6 +18,7 @@ class MenuCRUD:
     limit: int = 10,
     category: Optional[str] = None,
     search: Optional[str] = None,
+    shop_id: Optional[int] = None,
     available_only: bool = True
   ) -> List[Menu]:
     """メニュー一覧を取得"""
@@ -28,6 +29,9 @@ class MenuCRUD:
     
     if category:
       query = query.filter(Menu.category == category)
+    
+    if shop_id:
+      query = query.filter(Menu.shop_id == shop_id)
     
     if search:
       query = query.filter(
@@ -43,6 +47,7 @@ class MenuCRUD:
     self,
     category: Optional[str] = None,
     search: Optional[str] = None,
+    shop_id: Optional[int] = None,
     available_only: bool = True
   ) -> int:
     """メニューの総数を取得"""
@@ -53,6 +58,9 @@ class MenuCRUD:
     
     if category:
       query = query.filter(Menu.category == category)
+    
+    if shop_id:
+      query = query.filter(Menu.shop_id == shop_id)
     
     if search:
       query = query.filter(

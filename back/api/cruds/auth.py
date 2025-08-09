@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from ..models.users import Users
 from ..models.shop_users import ShopUsers
-from ..schemas.auth import UserCreate, ShopUserCreate
+from ..schemas.auth import UserCreate, ShopUserCreate, UserUpdate
 from ..auth import get_password_hash, verify_password
 
 def get_user_by_username(db: Session, username: str) -> Optional[Users]:
@@ -66,3 +66,17 @@ def authenticate_shop_user(db: Session, username: str, password: str) -> Optiona
   if not verify_password(password, shop_user.password_hash):
     return None
   return shop_user
+
+def update_user(db: Session, user_id: int, user_update: UserUpdate) -> Optional[Users]:
+  """ユーザー情報の更新"""
+  db_user = db.query(Users).filter(Users.id == user_id).first()
+  if not db_user:
+    return None
+  
+  update_data = user_update.model_dump(exclude_unset=True)
+  for field, value in update_data.items():
+    setattr(db_user, field, value)
+  
+  db.commit()
+  db.refresh(db_user)
+  return db_user
