@@ -13,7 +13,6 @@ export default function Post() {
   const { isAuthenticated, userType, isLoading } = useAuth();
   const router = useRouter();
 
-  // ローディング中または認証されていない場合、店舗ユーザー以外の場合はアクセス制限
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
@@ -41,7 +40,6 @@ export default function Post() {
   const [message, setMessage] = useState("");
   const [newTag, setNewTag] = useState("");
 
-  // クリーンアップ: blob URLを解放
   useEffect(() => {
     return () => {
       if (formData.image_url && formData.image_url.startsWith('blob:')) {
@@ -100,7 +98,6 @@ export default function Post() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // 前のblob URLがあれば解放
       if (formData.image_url && formData.image_url.startsWith('blob:')) {
         URL.revokeObjectURL(formData.image_url);
       }
@@ -117,7 +114,6 @@ export default function Post() {
     e.preventDefault();
     console.log("Form submitted with data:", formData);
     
-    // フォームバリデーション
     if (!formData.name.trim()) {
       setMessage("名前を入力してください");
       return;
@@ -137,7 +133,6 @@ export default function Post() {
     try {
       let imageUrl = "/menu-default.jpg";
       
-      // ファイルが選択されている場合、実際のアップロード処理を行う
       if (selectedFile) {
         console.log("Uploading image:", selectedFile.name);
         setMessage("画像をアップロード中...");
@@ -170,7 +165,7 @@ export default function Post() {
       
       if (response.success) {
         setMessage("メニューが正常に投稿されました！");
-        // blob URLがあれば解放
+
         if (formData.image_url && formData.image_url.startsWith('blob:')) {
           URL.revokeObjectURL(formData.image_url);
         }
@@ -186,7 +181,6 @@ export default function Post() {
         setSelectedFile(null);
         setNewTag("");
         
-        // 投稿完了後、少し待ってからトップページへ遷移
         setTimeout(() => {
           router.push('/');
         }, 1500);
@@ -201,7 +195,6 @@ export default function Post() {
     }
   };
 
-  // ローディング中または認証チェック中は何も表示しない
   if (isLoading || !isAuthenticated || userType !== 'shop_user') {
     return (
       <div className="flex justify-center items-center min-h-screen">
