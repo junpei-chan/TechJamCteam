@@ -17,3 +17,10 @@ class Shop(Base):
   area = relationship("Area", back_populates="shops")
   menus = relationship("Menu", back_populates="shop")
   shop_users = relationship("ShopUsers", back_populates="shop")
+
+  # 店舗に紐づく NotificationShop の一覧を取得できるように
+  shop_notifications = relationship(
+    "NotificationShop",
+    back_populates="shop",
+    cascade="all, delete-orphan"
+  )
