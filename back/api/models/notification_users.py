@@ -13,5 +13,7 @@ class NotificationUsers(Base):
   notification = relationship("Notification", back_populates="notification_users")
   user = relationship("Users", back_populates="user_notifications")
 
+  # なんで動かんねん
+
   def __repr__(self):
     return f"<NotificationUsers(notification_id={self.notification_id}, user_id={self.user_id})>"
