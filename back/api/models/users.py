@@ -14,9 +14,8 @@ class Users(Base):
   created_at = Column(DateTime(timezone=True), server_default=func.now())
   updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-  # ユーザーに紐づく NotificationUsers の一覧を取得できるように
   user_notifications = relationship(
-    "NotificationUsers",
+    "notification_users",
     back_populates="user",
     cascade="all, delete-orphan"
   )

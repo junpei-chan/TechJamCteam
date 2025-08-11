@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { menuDelete } from '@/api/menu/menuDelete';
 import { MenuIndex, MenuIndexRequest, MenuIndexResponse } from '@/api/menu/menuIndex';
 import { MenuItem } from './MenuItem';
 import { useRouter } from 'next/navigation';
@@ -14,6 +15,7 @@ export function MenuList() {
   const [totalItems, setTotalItems] = useState(0);
   const [perPage, setPerPage] = useState(10);
   const router = useRouter();
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -58,6 +60,20 @@ export function MenuList() {
     router.push(`/menu/${menuId}`);
   };
 
+  // メニュー削除処理
+  const handleDelete = async (menuId: number) => {
+    if (!window.confirm('本当にこのメニューを削除しますか？')) return;
+    setDeletingId(menuId);
+    const result = await menuDelete(menuId);
+    setDeletingId(null);
+    if (result.success) {
+      setMenus((prev) => prev.filter((menu) => menu.id !== menuId));
+      setTotalItems((prev) => prev - 1);
+    } else {
+      alert(result.messages?.join('\n') || '削除に失敗しました');
+    }
+  };
+
   const totalPages = Math.ceil(totalItems / perPage);
   
   const handlePageChange = (page: number) => {
@@ -76,7 +92,6 @@ export function MenuList() {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
 
-    // 前へボタン
     if (currentPage > 1) {
       pages.push(
         <button
@@ -154,24 +169,34 @@ export function MenuList() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-4 mt-[182px] mb-18">      
+    <div className="container mx-auto px-4 py-4 mt-[182px] mb-18">
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {menus.map((menu) => (
-          <div key={menu.id} className="relative">
-            <div 
+          <div key={menu.id} className="relative group">
+            <div
               onClick={() => handleMenuClick(menu.id)}
               className="cursor-pointer transition-transform hover:scale-105"
             >
-              <MenuItem 
+              <MenuItem
                 image_url={getImageSrc(menu)}
                 name={menu.name}
                 price={menu.price}
               />
             </div>
+            {/* 削除ボタン */}
+            <button
+              className="absolute top-2 right-2 bg-red-500 text-white rounded px-2 py-1 text-xs opacity-80 hover:opacity-100 group-hover:block hidden z-10 disabled:opacity-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(menu.id);
+              }}
+              disabled={deletingId === menu.id}
+            >
+              {deletingId === menu.id ? '削除中...' : '削除'}
+            </button>
           </div>
         ))}
       </div>
-      
       {renderPagination()}
     </div>
   );
