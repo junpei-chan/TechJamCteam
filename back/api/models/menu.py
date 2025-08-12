@@ -19,6 +19,12 @@ class Menu(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    menu_favorites = relationship(
+        "MenuFavorites",
+        back_populates="menu",
+        cascade="all, delete-orphan"
+    )
+
     shop = relationship("Shop", back_populates="menus")
     
     def __repr__(self):
