@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import Optional
-from ..schemas.menu import MenuCreate, MenuUpdate, MenuResponse, MenuListResponse
-from ..cruds.menu import MenuCRUD
+from api.schemas.menu import MenuCreate, MenuUpdate, MenuResponse, MenuListResponse
+from api.cruds.menu import MenuCRUD
 from ..database import get_db
-from ..routers.auth import get_current_shop_user
-from ..models.shop_users import ShopUsers
+from api.routers.auth import get_current_shop_user
+from api.models.shop_users import ShopUsers
 
 router = APIRouter(prefix="/menus", tags=["menus"])
 

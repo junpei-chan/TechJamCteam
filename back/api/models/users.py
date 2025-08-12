@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from ..database import Base
+from api.database import Base
+
+from api.models.notification_users import NotificationUsers
 
 class Users(Base):
   __tablename__ = "users"
@@ -15,7 +17,13 @@ class Users(Base):
   updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
   user_notifications = relationship(
-    "notification_users",
+    "NotificationUsers",
+    back_populates="user",
+    cascade="all, delete-orphan"
+  )
+
+  notifications = relationship(
+    "Notification",
     back_populates="user",
     cascade="all, delete-orphan"
   )

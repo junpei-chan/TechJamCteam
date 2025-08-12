@@ -1,14 +1,14 @@
 from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from ..database import Base
+from api.database import Base
 
 class Menu(Base):
     __tablename__ = "menus"
     
     id = Column(Integer, primary_key=True, index=True)
     shop_id = Column(Integer, ForeignKey("shops.id"), nullable=False)
-    genre_id = Column(Integer, nullable=True)  # 外部キー制約を一時的に削除
+    genre_id = Column(Integer, nullable=True)
     name = Column(String(100), nullable=False, index=True)
     description = Column(Text)
     price = Column(Float, nullable=False)

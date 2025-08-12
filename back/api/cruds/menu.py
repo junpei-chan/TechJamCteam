@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import List, Optional
-from ..models.menu import Menu
-from ..schemas.menu import MenuCreate, MenuUpdate
+from api.models.menu import Menu
+from api.schemas.menu import MenuCreate, MenuUpdate
 
 class MenuCRUD:
   def __init__(self, db: Session):

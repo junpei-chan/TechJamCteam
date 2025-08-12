@@ -1,5 +1,5 @@
-from ..database import Base
 from sqlalchemy import Column, Integer, ForeignKey
+from api.database import Base
 
 class MenuFavorites(Base):
     __tablename__ = "menu_favorites"

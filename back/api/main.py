@@ -2,14 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
-from .routers import menu, menu_single, users, shop, area, menu_favorites, favorites, auth, upload  # , genre  # 一時的にコメントアウト
-from .models import users as user_models
-from .models import area as area_models
-from .models import menu as menu_models
-from .models import menu as menu_models
-from .models import shop as shop_models
-from .models import menu_favorites as menu_favorites_models
-from .models import shop_users as shop_user_models
+from api.routers import menu, menu_single, users, shop, area, menu_favorites, favorites, auth, upload  # , genre  # 一時的にコメントアウト
+from api.models import users as user_models
+from api.models import area as area_models
+from api.models import menu as menu_models
+from api.models import menu as menu_models
+from api.models import shop as shop_models
+from api.models import menu_favorites as menu_favorites_models
+from api.models import shop_users as shop_user_models
 import time
 import logging
 from sqlalchemy import text

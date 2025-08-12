@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from ..database import Base
+from api.database import Base
 
 class Area(Base):
   __tablename__ = "areas"
