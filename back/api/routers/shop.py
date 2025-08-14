@@ -3,13 +3,23 @@ from sqlalchemy.orm import Session
 from ..cruds import shop as cruds
 from ..schemas.shop import ShopBase, ShopCreate, ShopRead, ShopUpdate
 from ..database import get_db
-
+from ..models import Users, ShopUsers
+from ..routers.auth import get_current_user
 router = APIRouter(prefix="/shops", tags=["shops"])
 
 # 新しいショップを作成し、作成された内容を返す
 @router.post("/", response_model=ShopRead)
-def create_shop(shop: ShopCreate, db: Session = Depends(get_db)):
-  return cruds.create_shop(db, shop)
+def create_shop(
+    shop: ShopCreate,
+    db: Session = Depends(get_db),
+  current_user: Users = Depends(get_current_user)
+):
+    db_shop = cruds.create_shop(db, shop)
+    # --- ユーザーと店舗の紐付け ---
+    shop_user = ShopUsers(user_id=current_user.id, shop_id=db_shop.id)
+    db.add(shop_user)
+    db.commit()
+    return db_shop
 
 # 全ショップの一覧を取得（最大100件まで）
 @router.get("/", response_model=list[ShopRead])

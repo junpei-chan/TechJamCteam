@@ -55,16 +55,21 @@ def get_menu(menu_id: int, db: Session = Depends(get_db)):
   return menu
 
 @router.post("/", response_model=MenuResponse)
+@router.post("/", response_model=MenuResponse)
 def create_menu(
-  menu: MenuCreate, 
+  menu: MenuCreate,
   db: Session = Depends(get_db),
-  current_shop_user: ShopUsers = Depends(get_current_shop_user)
+  current_user: ShopUsers = Depends(get_current_shop_user)
 ):
   """新しいメニューを作成"""
   # 店舗ユーザーが自分の店舗のメニューのみ作成できるようにチェック
-  if menu.shop_id != current_shop_user.shop_id:
+  if menu.shop_id != current_user.shop_id:
     raise HTTPException(status_code=403, detail="You can only create menus for your own shop")
-  
+
+  # menu.shop_id がリクエストで必須か確認し、なければエラーを返す
+  if not menu.shop_id:
+    raise HTTPException(status_code=400, detail="shop_id is required")
+
   crud = MenuCRUD(db)
   return crud.create_menu(menu)
 
