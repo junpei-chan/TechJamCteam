@@ -43,12 +43,9 @@ export function MenuList() {
     if (imageErrors.has(menu.id)) {
       return '/menu-default.jpg';
     }
-    // blob URLやローカルURLの場合はデフォルト画像を使用
     if (menu.image_url && (menu.image_url.startsWith('blob:') || menu.image_url.startsWith('file:'))) {
       return '/menu-default.jpg';
     }
-    
-    // バックエンドの静的画像URLの場合、完全なURLを構築
     if (menu.image_url && menu.image_url.startsWith('/static/')) {
       return `${process.env.NEXT_PUBLIC_BACKEND_URL}${menu.image_url}`;
     }
@@ -60,7 +57,6 @@ export function MenuList() {
     router.push(`/menu/${menuId}`);
   };
 
-  // メニュー削除処理
   const handleDelete = async (menuId: number) => {
     if (!window.confirm('本当にこのメニューを削除しますか？')) return;
     setDeletingId(menuId);
@@ -183,7 +179,7 @@ export function MenuList() {
                 price={menu.price}
               />
             </div>
-            {/* 削除ボタン */}
+            
             <button
               className="absolute top-2 right-2 bg-red-500 text-white rounded px-2 py-1 text-xs opacity-80 hover:opacity-100 group-hover:block hidden z-10 disabled:opacity-50"
               onClick={(e) => {

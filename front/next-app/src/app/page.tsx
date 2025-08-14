@@ -8,14 +8,13 @@ import { Logo, SearchBar, ConditionalFooter } from "@/components/shared/";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Top() {
-  const { isAuthenticated, userType, isLoading } = useAuth(false); // 認証を必須にしない
+  const { isAuthenticated, userType, isLoading } = useAuth(false);
   const [currentUserType, setCurrentUserType] = useState<string | null>(null);
 
   useEffect(() => {
-    // ローカルストレージからユーザータイプを取得、存在しない場合はデフォルト設定
     let savedUserType = localStorage.getItem("userType");
     if (!savedUserType) {
-      savedUserType = "user"; // デフォルトは一般ユーザー
+      savedUserType = "user";
       localStorage.setItem("userType", savedUserType);
     }
     setCurrentUserType(savedUserType);
@@ -25,7 +24,6 @@ export default function Top() {
     const newUserType = currentUserType === "shop_user" ? "user" : "shop_user";
     localStorage.setItem("userType", newUserType);
     setCurrentUserType(newUserType);
-    // ページをリロードしてフッターを更新
     window.location.reload();
   };
 

@@ -20,7 +20,7 @@ export function MenuItem({
   };
 
   return (
-    <div className="flex flex-col items-center text-center">
+    <div className="flex flex-col gap-2 items-center text-center">
       <Image 
         src={imageError ? '/menu-default.jpg' : image_url}
         alt={`${name}`}
